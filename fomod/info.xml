@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<fomod>
+  <Name>Contract Hunter</Name>
+  <Author>synthalorian</Author>
+  <Version>@VERSION@</Version>
+  <Website>https://github.com/synthalorian/contract-hunter</Website>
+  <Description>Solo bounty hunting: courier bounty letters on named outlaws, Notice/Wanted/Dread tiers, deadlines, notoriety, avengers and per-hold standing. Early beta.</Description>
+  <Groups>
+    <element>Quests and Adventures</element>
+  </Groups>
+</fomod>
