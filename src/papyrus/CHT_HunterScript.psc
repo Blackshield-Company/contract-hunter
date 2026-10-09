@@ -77,6 +77,28 @@ Event OnInit()
 	RegisterForSingleUpdate(20.0)
 EndEvent
 
+; Update registrations do not survive a save load. CHT_LoadAliasScript calls this.
+Function GameLoaded()
+	If CHT_Registered.GetValueInt() == 0
+		If !writDelivered
+			RegisterForSingleUpdate(20.0)
+		Else
+			RegisterForSingleUpdateGameTime(24.0)
+		EndIf
+	ElseIf pendingAvengers > 0
+		RegisterForSingleUpdateGameTime(1.0)
+	Else
+		RegisterForSingleUpdateGameTime(6.0)
+	EndIf
+	Int i = 0
+	While i < Bounties.Length
+		If Bounties[i] != None && Bounties[i].IsRunning()
+			(Bounties[i] as CHT_BountyScript).ResumeAfterLoad()
+		EndIf
+		i += 1
+	EndWhile
+EndFunction
+
 ; Real-time poll, only until the writ has been delivered.
 Event OnUpdate()
 	If CHT_Registered.GetValueInt() != 0 || writDelivered

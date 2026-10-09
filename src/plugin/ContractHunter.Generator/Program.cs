@@ -51,6 +51,11 @@ internal static class Program
         foreach (var r in ids.Retired) Console.WriteLine($"[generate] note: retired EditorID kept reserved: {r}");
         Console.WriteLine($"[generate] wrote {outPath}");
 
+        int seq;
+        using (var written = SkyrimMod.CreateFromBinaryOverlay(outPath, Release))
+            seq = SeqFile.Write(outDir, written);
+        Console.WriteLine($"[generate] SEQ: {seq} start-game-enabled quest(s)");
+
         var errors = PluginValidator.Validate(outPath, new PapyrusIndex(papyrusDir), new HashSet<ModKey> { Skyrim }, reportPath, builder.ExpectedUnfilled);
         return errors == 0 ? 0 : 1;
     }

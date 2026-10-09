@@ -2,6 +2,15 @@
 
 All notable changes to this project are documented here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+## [0.1.1] - 2026-10-08
+
+### Fixed
+- Bounty letters now name the outlaw and the location. The Letter alias on every bounty quest stores text and uses the stored names, so `<Alias=Target>` and `<Alias=ContractLocation>` resolve instead of printing raw on the page.
+- Save/load no longer stops courier letters, bounty deadlines, or avengers. A start-game-enabled load quest restarts them. A deadline already running keeps its remaining time.
+- Ships `SEQ/ContractHunter.seq`. On 1.6 the hunter quest does not start without it.
+
 ## [0.1.0] - 2026-10-06
 
 Early beta. First public release. It passes every automated check in the build (Papyrus compile, plugin validation, round trip, FOMOD schema) but has not been playtested in-game yet. Please report problems on the Nexus page or on GitHub.

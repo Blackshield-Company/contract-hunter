@@ -24,6 +24,23 @@ Int Property STAGE_ABANDONED = 200 AutoReadOnly
 Bool finished = False
 Bool extrasSpawned = False
 Int extraGuards = 0
+Float deadlineAt = 0.0
+
+; Called by CHT_HunterScript after a save load. The deadline registration does not survive one.
+Function ResumeAfterLoad()
+	If finished || !IsRunning()
+		Return
+	EndIf
+	Float now = Utility.GetCurrentGameTime()
+	If deadlineAt <= 0.0
+		deadlineAt = now + DeadlineDays
+	EndIf
+	Float hours = (deadlineAt - now) * 24.0
+	If hours < 0.05
+		hours = 0.05
+	EndIf
+	RegisterForSingleUpdateGameTime(hours)
+EndFunction
 
 ; Called by CHT_HunterScript right after Start() succeeds.
 Function Begin(Int aiNotoriety)
@@ -36,6 +53,7 @@ Function Begin(Int aiNotoriety)
 	EndIf
 	SetStage(STAGE_STARTED)
 	SetObjectiveDisplayed(OBJ_MAIN)
+	deadlineAt = Utility.GetCurrentGameTime() + DeadlineDays
 	RegisterForSingleUpdateGameTime(DeadlineDays * 24.0)
 	If aiNotoriety > 0
 		Debug.Notification("This outlaw has escaped hunters before (notoriety " + aiNotoriety + "). Expect company.")

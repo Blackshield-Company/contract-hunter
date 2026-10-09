@@ -38,7 +38,9 @@ echo "== Plugin"
 dotnet run --project src/plugin/ContractHunter.Generator -c Release -- \
   --out "$BUILD/plugin" --ids src/plugin/formids.json --papyrus src/papyrus
 python3 "$KIT/esp_check.py" "$BUILD/plugin/$NAME.esp"
+mkdir -p "$STAGE/00 Core/SEQ"
 cp "$BUILD/plugin/$NAME.esp" "$STAGE/00 Core/"
+cp "$BUILD/plugin/SEQ/$NAME.seq" "$STAGE/00 Core/SEQ/"
 
 echo "== FOMOD"
 ARCHIVE="$DIST_DIR/$NAME-$VERSION.zip"

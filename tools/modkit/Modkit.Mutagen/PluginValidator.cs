@@ -162,6 +162,28 @@ public static class PluginValidator
             {
                 if (a.Location?.AliasID is int la && !aliasIds.Contains(la)) errors.Add($"{q.EditorID}: alias {a.Name} refers to missing alias {la}");
                 if (a.CreateReferenceToObject is { } c && !aliasIds.Contains(c.AliasID)) errors.Add($"{q.EditorID}: alias {a.Name} creates at missing alias {c.AliasID}");
+                if (a.CreateReferenceToObject is { } created
+                    && mod.Books.TryGetValue(created.Object.FormKey, out var book))
+                {
+                    var bookText = book.BookText?.String ?? "";
+                    var bookTags = tagRx.Matches(bookText).Cast<System.Text.RegularExpressions.Match>()
+                        .Where(m => m.Groups[1].Value == "Alias").ToList();
+                    if (bookTags.Count > 0)
+                    {
+                        var flags = a.Flags.GetValueOrDefault();
+                        if (!flags.HasFlag(QuestAlias.Flag.UsesStoredText) || !flags.HasFlag(QuestAlias.Flag.StoresText))
+                            errors.Add($"{q.EditorID}: alias {a.Name} creates {book.EditorID}, whose text uses <Alias=...>, but the alias lacks Stores Text and Uses Stored Text");
+                        foreach (var m in bookTags)
+                        {
+                            var name = m.Groups[2].Value;
+                            var src = q.Aliases.FirstOrDefault(x => string.Equals(x.Name, name, StringComparison.OrdinalIgnoreCase));
+                            if (src == null)
+                                errors.Add($"{q.EditorID}: {book.EditorID} uses <Alias={name}> but the quest has no such alias");
+                            else if (!src.Flags.GetValueOrDefault().HasFlag(QuestAlias.Flag.StoresText))
+                                errors.Add($"{q.EditorID}: {book.EditorID} uses <Alias={name}> but that alias does not Store Text");
+                        }
+                    }
+                }
             }
             if (q.VirtualMachineAdapter != null)
                 foreach (var s in q.VirtualMachineAdapter.Scripts)

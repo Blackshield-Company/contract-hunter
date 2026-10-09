@@ -36,6 +36,7 @@
   "CHT_LetterIntervalDays": "000822",
   "CHT_LetterNotice": "000830",
   "CHT_LetterWanted": "000831",
+  "CHT_LoadQuest": "000856",
   "CHT_MsgAbandonMenu": "000854",
   "CHT_MsgBountyCourier": "000851",
   "CHT_MsgIntroCourier": "00084E",

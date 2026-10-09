@@ -230,6 +230,27 @@ internal sealed class Builder
             Vmad.Obj("CHT_MsgLedgerMenu", msgLedger), Vmad.Obj("CHT_MsgRequestMenu", msgRequest),
             Vmad.Obj("CHT_MsgAbandonMenu", msgAbandon), Vmad.Obj("CHT_MsgNoBounty", msgNoBounty)));
 
+        var questLoad = Id("CHT_LoadQuest");
+        var load = Add(new Quest(questLoad, R)
+        {
+            EditorID = "CHT_LoadQuest",
+            Name = "Contract Hunter",
+            Flags = Quest.Flag.StartGameEnabled,
+            Priority = 40,
+            Type = Quest.TypeEnum.None,
+            QuestFormVersion = VanillaQuestFormVersion,
+            NextAliasID = 1,
+        });
+        load.Aliases.Add(new QuestAlias
+        {
+            ID = 0,
+            Type = QuestAlias.TypeEnum.Reference,
+            Name = "Player",
+            ForcedReference = new FormLinkNullable<IPlacedGetter>(PlayerRef),
+        });
+        load.VirtualMachineAdapter = Vmad.QuestAdapter()
+            .WithAliasScripts(questLoad, 0, Vmad.Script("CHT_LoadAliasScript", Vmad.Obj("Hunter", questHunter)));
+
         // --- Bounty quests, one per named outlaw -----------------------------------------------
         int index = 0;
         for (int t = 0; t < tiers.Length; t++)
@@ -286,6 +307,10 @@ internal sealed class Builder
                 q.Aliases.Add(new QuestAlias
                 {
                     ID = AliasLetter, Type = QuestAlias.TypeEnum.Reference, Name = "Letter",
+                    // A created note does not inherit the quest's stored names unless this
+                    // alias both stores text and uses it. Without that, the page shows
+                    // the literal <Alias=Target> / <Alias=ContractLocation> tags.
+                    Flags = QuestAlias.Flag.StoresText | QuestAlias.Flag.UsesStoredText,
                     CreateReferenceToObject = new CreateReferenceToObject
                     {
                         Object = L<ISkyrimMajorRecordGetter>(letters[t].FormKey), AliasID = AliasPlayer,
