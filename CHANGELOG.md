@@ -4,6 +4,13 @@ All notable changes to this project are documented here. Versions follow [Semant
 
 ## [Unreleased]
 
+## [0.1.2] - 2026-10-10
+
+Still early beta, not yet playtested in game.
+
+### Fixed
+- Wrye Bash could not load the plugin (IndexError "list index out of range"). The first stage's quest log entry was written without its QSDT (log entry flags) subrecord, which every log entry must start with. Every log entry now has one. No gameplay changes.
+
 ## [0.1.1] - 2026-10-08
 
 ### Fixed

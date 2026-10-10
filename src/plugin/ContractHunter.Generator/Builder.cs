@@ -269,7 +269,7 @@ internal sealed class Builder
                     QuestFormVersion = VanillaQuestFormVersion,
                 });
                 q.Stages.Add(new QuestStage { Index = 0, Flags = QuestStage.Flag.StartUpStage });
-                q.Stages.Add(new QuestStage { Index = 10, LogEntries = { new QuestLogEntry { Entry = tier.Text.StartLog } } });
+                q.Stages.Add(new QuestStage { Index = 10, LogEntries = { new QuestLogEntry { Flags = 0, Entry = tier.Text.StartLog } } });
                 q.Stages.Add(new QuestStage { Index = 100, LogEntries = { new QuestLogEntry { Flags = QuestLogEntry.Flag.CompleteQuest, Entry = Texts.StageDone } } });
                 q.Stages.Add(new QuestStage { Index = 150, Flags = QuestStage.Flag.ShutDownStage, LogEntries = { new QuestLogEntry { Flags = QuestLogEntry.Flag.FailQuest, Entry = Texts.StageExpired } } });
                 q.Stages.Add(new QuestStage { Index = 200, Flags = QuestStage.Flag.ShutDownStage, LogEntries = { new QuestLogEntry { Flags = QuestLogEntry.Flag.FailQuest, Entry = Texts.StageAbandoned } } });
