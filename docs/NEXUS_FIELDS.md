@@ -4,7 +4,7 @@ Game: Skyrim Special Edition
 
 Mod name: Contract Hunter
 
-Version: 0.1.2 (early beta)
+Version: 0.1.3 (early beta)
 
 Category: Quests and Adventures
 
@@ -12,9 +12,9 @@ Short summary (201 chars):
 Solo bounty hunting: courier letters name real outlaws at real locations. Notice, Wanted and Dread tiers, deadlines, notoriety, avengers and per-hold standing. Base game only, ESL, no SKSE. Early beta.
 
 Main file:
-- File: ContractHunter-0.1.2.zip (FOMOD installer)
+- File: ContractHunter-0.1.3.zip (FOMOD installer)
 - File name: Contract Hunter
-- File version: 0.1.2
+- File version: 0.1.3
 - File category: Main Files
 - File description: Early beta. FOMOD installer with ContractHunter.esp (ESL-flagged), compiled scripts, and optional Papyrus sources. Requires only Skyrim Special Edition / Anniversary Edition (1.5.97 or 1.6.x).
 

@@ -2,6 +2,13 @@
 
 All notable changes to this project are documented here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.3] - 2026-10-11
+
+Still early beta, not yet playtested in game.
+
+### Fixed
+- The Hunter's Writ could never arrive if the Helgen quest (MQ101) stayed flagged as running, which happens with some alternate-start and skip-Helgen setups. Once "Before the Storm" has started, Helgen now counts as done. While the writ is waiting, the Papyrus log says why (grep CHT_).
+
 ## [Unreleased]
 
 ## [0.1.2] - 2026-10-10

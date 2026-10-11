@@ -26,6 +26,8 @@ Quest[] Property Bounties Auto
 {One quest per named outlaw: 8 Notice, 8 Wanted, 6 Dread.}
 
 Quest Property MQ101 Auto
+Quest Property MQ102 Auto
+{Before the Storm. 0.1.3: once it has started, Helgen is over even if MQ101 is still flagged running.}
 Book Property CHT_HuntersWrit Auto
 Spell Property CHT_PowerLedger Auto
 MiscObject Property CHT_TrophySignet Auto
@@ -107,6 +109,7 @@ Event OnUpdate()
 	If Game.GetPlayer().GetLevel() >= CHT_IntroMinLevel.GetValueInt() && CanDeliver()
 		DeliverWrit()
 	Else
+		Debug.Trace("CHT_ writ waiting: level " + Game.GetPlayer().GetLevel() + "/" + CHT_IntroMinLevel.GetValueInt() + ", MQ101 running " + (MQ101 && MQ101.IsRunning()) + ", past Helgen " + PastHelgen())
 		RegisterForSingleUpdate(30.0)
 	EndIf
 EndEvent
@@ -119,9 +122,14 @@ Function DeliverWrit()
 	RegisterForSingleUpdateGameTime(24.0)
 EndFunction
 
+; 0.1.3: some start/skip-Helgen setups leave MQ101 running forever, which blocked the writ.
+Bool Function PastHelgen()
+	Return MQ102 && (MQ102.IsRunning() || MQ102.IsCompleted() || MQ102.GetStage() > 0)
+EndFunction
+
 Bool Function CanDeliver()
 	Actor player = Game.GetPlayer()
-	If MQ101 && MQ101.IsRunning() && !MQ101.IsCompleted()
+	If MQ101 && MQ101.IsRunning() && !MQ101.IsCompleted() && !PastHelgen()
 		Return False
 	EndIf
 	If player.IsInCombat()

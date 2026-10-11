@@ -17,6 +17,7 @@ internal static class Vanilla
     public static readonly FormKey ClassWarrior1H = K(0x013176);
     public static readonly FormKey CsHumanMelee = K(0x068849);
     public static readonly FormKey MQ101 = K(0x03372B);
+    public static readonly FormKey MQ102 = K(0x04E50D);
 
     // Leveled bandits, split by gender so names match
     public static readonly FormKey LCharBanditMeleeAny = K(0x03DECD);

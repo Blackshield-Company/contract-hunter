@@ -220,7 +220,7 @@ internal sealed class Builder
             Vmad.ObjList("Standing", gStanding),
             Vmad.ObjList("Holds", holds.Select(h => h.loc).ToArray()),
             Vmad.ObjList("Bounties", bountyQuests),
-            Vmad.Obj("MQ101", MQ101),
+            Vmad.Obj("MQ101", MQ101), Vmad.Obj("MQ102", MQ102),
             Vmad.Obj("CHT_HuntersWrit", writ.FormKey), Vmad.Obj("CHT_PowerLedger", powerLedger.FormKey),
             Vmad.Obj("CHT_TrophySignet", trophySignet.FormKey), Vmad.Obj("CHT_TrophySkull", trophySkull.FormKey),
             Vmad.Obj("CHT_LCharDreadAvenger", lvlAvenger.FormKey), Vmad.Obj("Gold001", Gold001),

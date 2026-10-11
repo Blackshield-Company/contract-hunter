@@ -2,7 +2,7 @@
 
 A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bounty letters naming real outlaws hiding at real places. Deadlines matter: let a target slip away and they come back bolder, and a lapsed Dread warrant sends avengers after you. The jarls remember who keeps their roads clean.
 
-**Status: v0.1.2, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). v0.1.2 had not been playtested; a player confirmed bounty letters printed the raw `<Alias=…>` tags, and 0.1.2 fixes that. See [docs/TESTING.md](docs/TESTING.md).
+**Status: v0.1.3, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). v0.1.3 had not been playtested; a player confirmed bounty letters printed the raw `<Alias=…>` tags, and 0.1.3 fixes that. See [docs/TESTING.md](docs/TESTING.md).
 
 - Game: Skyrim Special Edition / Anniversary Edition 1.6.x (also fine on 1.5.97). Works on Windows and on Linux through Proton.
 - Requirements: none beyond the base game. No SKSE, no SkyUI, no DLC, no Creation Club content.
