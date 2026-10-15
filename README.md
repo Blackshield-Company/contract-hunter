@@ -1,3 +1,5 @@
+![contract-hunter](.github/preview.png)
+
 # Contract Hunter
 
 A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bounty letters naming real outlaws hiding at real places. Deadlines matter: let a target slip away and they come back bolder, and a lapsed Dread warrant sends avengers after you. The jarls remember who keeps their roads clean.
