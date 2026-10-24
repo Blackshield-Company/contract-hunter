@@ -76,7 +76,7 @@ As with any scripted mod, don't remove it mid-playthrough. If you must, tear up 
 Capture-alive contracts, more outlaws and locations, notice boards as an optional patch, and an MCM.
 
 [size=4][b]Source[/b][/size]
-Open source (MIT): [url=https://github.com/synthalorian/contract-hunter]github.com/synthalorian/contract-hunter[/url]
+Open source (MIT): [url=https://github.com/Blackshield-Company/contract-hunter]github.com/Blackshield-Company/contract-hunter[/url]
 
 [size=4][b]Credits[/b][/size]
 [list]
