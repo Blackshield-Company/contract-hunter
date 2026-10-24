@@ -35,4 +35,4 @@ Permissions (suggestion; code is MIT on GitHub):
 Tags (pick the closest matches in the tag picker):
 Quests, Lore-Friendly, Bounty, Gameplay, Radiant, ESL, No SKSE, Scripted
 
-Source: https://github.com/synthalorian/contract-hunter
+Source: https://github.com/Blackshield-Company/contract-hunter
