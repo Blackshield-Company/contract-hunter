@@ -228,7 +228,10 @@ internal sealed class Builder
             Vmad.Obj("CHT_MsgIntroCourier", msgIntro), Vmad.Obj("CHT_MsgRegisterOffer", msgRegister),
             Vmad.Obj("CHT_MsgRegistered", msgRegistered), Vmad.Obj("CHT_MsgBountyCourier", msgCourier),
             Vmad.Obj("CHT_MsgLedgerMenu", msgLedger), Vmad.Obj("CHT_MsgRequestMenu", msgRequest),
-            Vmad.Obj("CHT_MsgAbandonMenu", msgAbandon), Vmad.Obj("CHT_MsgNoBounty", msgNoBounty)));
+            Vmad.Obj("CHT_MsgAbandonMenu", msgAbandon), Vmad.Obj("CHT_MsgNoBounty", msgNoBounty),
+            // One real line feed. Papyrus string literals cannot hold one and the build
+            // compiler does not expand backslash escapes, so scripts take it from here.
+            Vmad.Str("LineBreak", "\n")));
 
         var questLoad = Id("CHT_LoadQuest");
         var load = Add(new Quest(questLoad, R)
@@ -293,6 +296,10 @@ internal sealed class Builder
                 {
                     ID = AliasTarget, Type = QuestAlias.TypeEnum.Reference, Name = "Target",
                     Flags = QuestAlias.Flag.StoresText,
+                    // 0.1.4: the outlaw sandboxes around where it was created instead of
+                    // standing still. A vanilla package, so no new PACK records (and no new
+                    // FormIDs). It sits on this alias only, so it ends with the bounty.
+                    PackageData = { new FormLink<IPackageGetter>(DefaultSandboxCurrentLocation1024) },
                     CreateReferenceToObject = new CreateReferenceToObject
                     {
                         Object = L<ISkyrimMajorRecordGetter>(outlawNpcs[index].FormKey), AliasID = AliasMapMarker,

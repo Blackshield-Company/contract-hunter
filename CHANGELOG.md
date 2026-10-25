@@ -2,6 +2,19 @@
 
 All notable changes to this project are documented here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [0.1.4] - 2026-10-24
+
+Still early beta. Built and checked, but not yet played in game (no Skyrim install is available to the build). Reported by a Nexus tester.
+
+### Fixed
+- The "Standing with the holds" screen, the "Bounty claimed" box, the lapsed-bounty box and the jarl's purse message printed a literal backslash-n instead of starting a new line. Papyrus text now takes its line breaks from a real line-feed character, and the build fails if any script string contains a backslash escape. A sweep of every other script, message, book, quest and NPC text found no other occurrences.
+- Taking a bounty from the Hunter's Ledger now counts as the current courier letter, so a second letter no longer arrives minutes later because of the timer started at signing. A courier still brings a bounty of a *different* tier when one is due (one open bounty per tier, as before).
+- The open-bounty flags are rebuilt from the bounty quests that are actually running every time a save is loaded.
+
+### Changed
+- Outlaws sandbox around their spot with a vanilla AI package instead of standing still until you arrive. Untested in game; please report any outlaw that wanders off or behaves oddly.
+- The courier message says that one bounty per tier can be open.
+
 ## [0.1.3] - 2026-10-11
 
 Still early beta, not yet playtested in game.

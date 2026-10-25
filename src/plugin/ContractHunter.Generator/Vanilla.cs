@@ -16,6 +16,8 @@ internal static class Vanilla
     public static readonly FormKey NordRace = K(0x013746);
     public static readonly FormKey ClassWarrior1H = K(0x013176);
     public static readonly FormKey CsHumanMelee = K(0x068849);
+    // Vanilla AI package "DefaultSandboxCurrentLocation1024": sandbox near self, radius 1024.
+    public static readonly FormKey DefaultSandboxCurrentLocation1024 = K(0x0BFB6B);
     public static readonly FormKey MQ101 = K(0x03372B);
     public static readonly FormKey MQ102 = K(0x04E50D);
 

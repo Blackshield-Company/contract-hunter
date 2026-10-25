@@ -29,7 +29,7 @@ The jarls remember who keeps their roads clean.
         "You sign the writ. The ink is barely dry before you hear the couriers have your name.\n\nYou can now open the Hunter's Ledger (a lesser power) to request bounties, check your open contracts, and see your standing with each hold.";
 
     public const string BountyCourier =
-        "A courier finds you. \"Bounty letter, hunter. Sealed by the hold courts.\" It's in your inventory.";
+        "A courier finds you. \"Bounty letter, hunter. Sealed by the hold courts.\" It's in your inventory. You can hold one open bounty per tier.";
 
     public const string LedgerMenu =
         "HUNTER'S LEDGER\n\nBounties claimed: %.0f\nOutlaws who escaped you: %.0f\nOpen bounties: %.0f / 3";

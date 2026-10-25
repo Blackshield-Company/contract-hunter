@@ -4,7 +4,7 @@
 
 A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bounty letters naming real outlaws hiding at real places. Deadlines matter: let a target slip away and they come back bolder, and a lapsed Dread warrant sends avengers after you. The jarls remember who keeps their roads clean.
 
-**Status: v0.1.3, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). v0.1.3 had not been playtested; a player confirmed bounty letters printed the raw `<Alias=…>` tags, and 0.1.3 fixes that. See [docs/TESTING.md](docs/TESTING.md).
+**Status: v0.1.4, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). v0.1.4 has not been played in game by the author; a player reported literal `\n` in the standing and bounty-claimed boxes, and 0.1.4 fixes that. See [docs/TESTING.md](docs/TESTING.md).
 
 - Game: Skyrim Special Edition / Anniversary Edition 1.6.x (also fine on 1.5.97). Works on Windows and on Linux through Proton.
 - Requirements: none beyond the base game. No SKSE, no SkyUI, no DLC, no Creation Club content.
@@ -16,7 +16,7 @@ A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bount
 | Feature | How it works |
 |---|---|
 | Registration | At level 3, past Helgen, a courier hands you the **Hunter's Writ**. Sign it to get the lesser power **Hunter's Ledger**. |
-| Bounty letters | Every 2 in-game days a courier brings a new letter, or ask for one in the ledger. Each letter names one outlaw and a vanilla location picked by the radiant system. Up to one open bounty per tier. |
+| Bounty letters | Every 2 in-game days a courier brings a new letter, or ask for one in the ledger. Each letter names one outlaw and a vanilla location picked by the radiant system. Up to one open bounty per tier (so a Wanted or Dread letter can arrive while a Notice is open, never two of the same tier). A bounty you request in the ledger counts as the current letter. |
 | Tiers | **Notice**: small-time outlaws, 5 days. **Wanted** (level 10+): gang leaders with a bodyguard, 7 days. **Dread** (level 20+): the worst, two guards and +100 Health, 10 days. |
 | Named outlaws | 22 of them, each with a fixed name and their own bounty, on vanilla bandit templates (gender-matched). Killed outlaws stay dead until a whole tier is cleared out. |
 | Notoriety | A lapsed or torn-up bounty raises that outlaw's notoriety (max 3). When they come back (escaped outlaws are offered first half the time), they bring one extra accomplice per point and pay 25% more per point. |

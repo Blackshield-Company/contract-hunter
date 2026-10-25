@@ -46,6 +46,14 @@ Message Property CHT_MsgRequestMenu Auto
 Message Property CHT_MsgAbandonMenu Auto
 Message Property CHT_MsgNoBounty Auto
 
+; A single real line-feed character (0x0A), filled by the plugin generator.
+; Papyrus string literals cannot hold one, and the build compiler does not expand
+; backslash escapes (the text would print a literal backslash and letter), so the
+; only escape-free way to break a line in a message box is to carry the character
+; in this property. Empty (an old save that predates 0.1.4): Br() falls back to a
+; plain space. Never write a backslash in a string literal; the build rejects it.
+String Property LineBreak Auto
+
 ; ---------------------------------------------------------------------------
 ; Tunables
 ; ---------------------------------------------------------------------------
@@ -67,6 +75,26 @@ Bool[] retired
 Bool[] jarlGiftGiven
 Float nextLetterTime = 0.0
 Int pendingAvengers = 0
+
+; ---------------------------------------------------------------------------
+; Text helper
+; ---------------------------------------------------------------------------
+
+; aiCount line breaks, for Debug.MessageBox text. Falls back to one space if the
+; LineBreak property is empty, so text stays readable and never shows a backslash.
+String Function Br(Int aiCount = 1)
+	String sep = LineBreak
+	If sep == ""
+		Return " "
+	EndIf
+	String result = ""
+	Int i = 0
+	While i < aiCount
+		result += sep
+		i += 1
+	EndWhile
+	Return result
+EndFunction
 
 ; ---------------------------------------------------------------------------
 ; Intro: the Hunter's Writ
@@ -99,6 +127,11 @@ Function GameLoaded()
 		EndIf
 		i += 1
 	EndWhile
+	; 0.1.4: re-derive the open-tier flags from the quests that are really running, so a
+	; flag left over from an interrupted session can never block or double up couriers.
+	If CHT_Registered.GetValueInt() != 0
+		SyncOpen()
+	EndIf
 EndFunction
 
 ; Real-time poll, only until the writ has been delivered.
@@ -345,14 +378,14 @@ Function BountyClaimed(Int aiIndex, Int aiTier, Location akLocation)
 	EndIf
 	String text = "Bounty claimed: " + pay + " gold."
 	If notoriety[aiIndex] > 0
-		text += "\n(+" + (25 * notoriety[aiIndex]) + "% for an outlaw who had escaped before.)"
+		text += Br() + "(+" + (25 * notoriety[aiIndex]) + "% for an outlaw who had escaped before.)"
 	EndIf
 	If aiTier == TIER_DREAD
 		player.AddItem(CHT_TrophySkull, 1, True)
-		text += "\nTrophy: Dread Trophy Skull."
+		text += Br() + "Trophy: Dread Trophy Skull."
 	ElseIf aiTier == TIER_WANTED && Utility.RandomInt(0, 2) == 0
 		player.AddItem(CHT_TrophySignet, 1, True)
-		text += "\nTrophy: Outlaw's Signet."
+		text += Br() + "Trophy: Outlaw's Signet."
 	EndIf
 	notoriety[aiIndex] = 0
 	retired[aiIndex] = True
@@ -360,7 +393,7 @@ Function BountyClaimed(Int aiIndex, Int aiTier, Location akLocation)
 	If hold >= 0
 		Int before = Standing[hold].GetValueInt()
 		SetStanding(hold, before + 5 * TierWeight(aiTier))
-		text += "\nStanding with " + HoldName(hold) + ": " + before + " -> " + Standing[hold].GetValueInt()
+		text += Br() + "Standing with " + HoldName(hold) + ": " + before + " -> " + Standing[hold].GetValueInt()
 	EndIf
 	OpenFlags[aiTier].SetValueInt(0)
 	RecountOpen()
@@ -382,18 +415,18 @@ Function BountyFailed(Int aiIndex, Int aiTier, Location akLocation, Bool abAband
 	Else
 		text = "A bounty lapsed. The outlaw slipped away."
 	EndIf
-	text += "\nTheir notoriety is now " + notoriety[aiIndex] + ". Next time they'll have more blades around them, and a bigger price on their head."
+	text += Br() + "Their notoriety is now " + notoriety[aiIndex] + ". Next time they'll have more blades around them, and a bigger price on their head."
 	If hold >= 0
 		Int before = Standing[hold].GetValueInt()
 		SetStanding(hold, before - 5 * TierWeight(aiTier))
-		text += "\nStanding with " + HoldName(hold) + ": " + before + " -> " + Standing[hold].GetValueInt()
+		text += Br() + "Standing with " + HoldName(hold) + ": " + before + " -> " + Standing[hold].GetValueInt()
 	EndIf
 	If aiTier == TIER_DREAD
 		pendingAvengers += 2 + notoriety[aiIndex] / 2
 		If pendingAvengers > MAX_AVENGERS
 			pendingAvengers = MAX_AVENGERS
 		EndIf
-		text += "\n\nThe outlaw's friends know who held the warrant. Watch the roads."
+		text += Br(2) + "The outlaw's friends know who held the warrant. Watch the roads."
 		RegisterForSingleUpdateGameTime(1.0)
 	EndIf
 	OpenFlags[aiTier].SetValueInt(0)
@@ -488,7 +521,7 @@ Function CheckJarlGift(Int aiHold)
 	If !jarlGiftGiven[aiHold] && Standing[aiHold].GetValueInt() >= JARL_GIFT_STANDING
 		jarlGiftGiven[aiHold] = True
 		Game.GetPlayer().AddItem(Gold001, JARL_GIFT_GOLD, True)
-		Debug.MessageBox("A courier brings a sealed purse from the Jarl of " + HoldName(aiHold) + ": " + JARL_GIFT_GOLD + " gold, \"for keeping our roads clean.\"\n\nBounties in " + HoldName(aiHold) + " now pay " + (Standing[aiHold].GetValueInt() / 2) + "% more, rising with your standing.")
+		Debug.MessageBox("A courier brings a sealed purse from the Jarl of " + HoldName(aiHold) + ": " + JARL_GIFT_GOLD + " gold, 'for keeping our roads clean.'" + Br(2) + "Bounties in " + HoldName(aiHold) + " now pay " + (Standing[aiHold].GetValueInt() / 2) + "% more, rising with your standing.")
 	EndIf
 EndFunction
 
@@ -553,6 +586,13 @@ Bool Function RequestMenu()
 		Return False
 	EndIf
 	If StartBounty(choice)
+		; 0.1.4: a bounty taken from the ledger counts as this period's letter. Without
+		; this, the first courier timer (set at signing) could drop a second bounty on a
+		; fresh hunter minutes after they asked for one.
+		Float earliest = Utility.GetCurrentGameTime() + CHT_LetterIntervalDays.GetValue()
+		If earliest > nextLetterTime
+			nextLetterTime = earliest
+		EndIf
 		Return True
 	EndIf
 	CHT_MsgNoBounty.Show()
@@ -614,12 +654,12 @@ Function RecountEscaped()
 EndFunction
 
 String Function StandingText()
-	String text = "STANDING WITH THE HOLDS\n"
+	String text = "STANDING WITH THE HOLDS" + Br()
 	Int i = 0
 	While i < HOLD_COUNT
-		text += "\n" + HoldName(i) + ": " + Standing[i].GetValueInt()
+		text += Br() + HoldName(i) + ": " + Standing[i].GetValueInt()
 		i += 1
 	EndWhile
-	text += "\n\nBounties pay up to 50% more where your standing is high. At " + JARL_GIFT_STANDING + ", the jarl sends a gift."
+	text += Br(2) + "Bounties pay up to 50% more where your standing is high. At " + JARL_GIFT_STANDING + ", the jarl sends a gift."
 	Return text
 EndFunction
