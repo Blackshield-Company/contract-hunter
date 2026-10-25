@@ -1,4 +1,4 @@
-# In-game test checklist (v0.1.1, early beta)
+# In-game test checklist (v0.1.4, early beta)
 
 v0.1.1 fixes the bounty letter text. v0.1.0 passed every automated build check but the letters printed raw `<Alias=…>` tags in game. This checklist is for confirming the letter names the outlaw and the location, and for the next round of fixes.
 
@@ -83,6 +83,16 @@ For each tier, start a bounty, travel to the marker, kill the target. `sqv CHT_B
 ## 7. Persistence
 - [ ] Save during an active bounty, quit to desktop, reload. The deadline still triggers, and killing the target still pays out.
 - [ ] Save with pending avengers, reload. They still arrive.
+
+## 8. v0.1.4 checks (not yet run in game)
+- [ ] Open the ledger, pick *Standing with the holds*: a title, then nine holds each on their own line, then the closing paragraph. No `\n` or backslash text anywhere.
+- [ ] Claim a bounty: the "Bounty claimed" box has gold, trophy, and standing each on their own line.
+- [ ] Let a bounty lapse / tear one up: the lapsed box and the (Dread) avenger warning are broken into lines.
+- [ ] Raise a hold to 50 standing: the jarl purse message has its paragraph break and uses apostrophes around the quote.
+- [ ] If any of these show one long line, the `LineBreak` property is empty (save from before 0.1.4 that kept the old script). The text is still readable, and a new game or a clean save fixes it. Please report it.
+- [ ] Sign the writ, immediately request a bounty from the ledger, then wait a few in-game hours: no second letter arrives for about 2 days. At level 10+ a Wanted letter (level 20+: Wanted or Dread) then arrives with the Notice still open (intended: one open bounty per tier).
+- [ ] Never two open bounties of the same tier; the ledger shows `Open bounties: n / 3` matching the journal.
+- [ ] Walk up to an outlaw's location: the outlaw is not frozen in place (sandboxing near the marker), still hostile and still dies for the claim. Report any that leave the location or never reach it.
 
 ## Stuck? Reset commands
 ```

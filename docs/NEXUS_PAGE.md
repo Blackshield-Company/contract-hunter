@@ -1,17 +1,17 @@
 # Nexus Mods page: Contract Hunter
 
-Early beta: v0.1.3 fixes bounty letters printing raw `<Alias=…>` tags. Exact upload-form values are in [NEXUS_FIELDS.md](NEXUS_FIELDS.md).
+Early beta: v0.1.4 fixes literal `\n` showing in the standing and bounty-claimed boxes. Exact upload-form values are in [NEXUS_FIELDS.md](NEXUS_FIELDS.md).
 
 ## Page settings
 
 - **Game:** Skyrim Special Edition
 - **Mod name:** Contract Hunter
-- **Version:** 0.1.3 (early beta)
+- **Version:** 0.1.4 (early beta)
 - **Category:** Quests and Adventures
 - **Suggested tags:** Quests, Lore-Friendly, Bounty, Gameplay, Radiant, ESL, No SKSE, Scripted
 - **Requirements:** none.
 - **Permissions (suggested):** source on GitHub under MIT, so allow modification and conversions with credit. Don't allow re-uploads of the archive itself.
-- **File to upload:** `ContractHunter-0.1.3.zip` (FOMOD), main file, named "Contract Hunter".
+- **File to upload:** `ContractHunter-0.1.4.zip` (FOMOD), main file, named "Contract Hunter".
 
 ## Description (paste into the BBCode editor)
 
@@ -19,7 +19,7 @@ Early beta: v0.1.3 fixes bounty letters printing raw `<Alias=…>` tags. Exact u
 [center][size=6][b]CONTRACT HUNTER[/b][/size]
 [size=3][i]A name, a place, a deadline. Bring them down before they slip away.[/i][/size]
 
-[size=3][color=#e0a030][b]EARLY BETA (v0.1.3)[/b]: bounty letters now name the outlaw and the location. v0.1.3 printed the raw alias tags. Please report bugs in the Bugs tab or on GitHub, ideally with your Papyrus log.[/color][/size][/center]
+[size=3][color=#e0a030][b]EARLY BETA (v0.1.4)[/b]: fixes line breaks in the standing and bounty-claimed boxes, and outlaws no longer stand perfectly still. Please report bugs in the Bugs tab or on GitHub, ideally with your Papyrus log.[/color][/size][/center]
 
 [line]
 
@@ -35,7 +35,7 @@ A courier finds you with the [b]Hunter's Writ[/b]. Sign it, and bounty letters s
 [*][b]Wanted[/b] (level 10+): gang leaders with a bodyguard. 7 days.
 [*][b]Dread[/b] (level 20+): the worst in Skyrim, with two guards and extra health. 10 days.
 [/list]
-[*][b]Courier letters[/b] every couple of in-game days (one open bounty per tier at most), or request one any time from the [b]Hunter's Ledger[/b] lesser power.
+[*][b]Courier letters[/b] every couple of in-game days (one open bounty per tier at most, so a Wanted or Dread letter can arrive while a Notice is open; a bounty you request counts as the current letter), or request one any time from the [b]Hunter's Ledger[/b] lesser power.
 [*][b]Notoriety[/b]: let a bounty lapse (or tear up the letter) and that outlaw's notoriety rises, up to 3. When they resurface, they bring an extra accomplice per point, and their price goes up 25% per point.
 [*][b]Avengers[/b]: let a Dread warrant lapse and 2 to 4 Blood-Sworn Avengers track you down on the road.
 [*][b]Standing with every hold[/b], 0 to 100. Claimed bounties raise it, failures lower it. High standing pays up to 50% more, and at 50 the jarl sends a purse of 500 gold.

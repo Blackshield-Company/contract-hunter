@@ -29,6 +29,9 @@ Every location alias is inside `CompanionsRadiantAllowedHolds`, has a map marker
 
 - Before registration: a 30-second real-time poll until the writ is delivered, then a once-a-day game-time check that re-delivers a lost, unsigned writ.
 - After registration: one game-time tick every 6 hours (every hour while avengers are pending) handles courier letters and avengers.
+- Courier timing: `nextLetterTime` is set to signing + 6 hours, then each courier letter pushes it out by `CHT_LetterIntervalDays`. A bounty requested from the ledger pushes it out the same way (0.1.4), so a request is not followed by an immediate courier. One open bounty per tier (`OpenFlags`), three at most. `GameLoaded` re-derives the flags from the running quests.
+- Text: Papyrus string literals never contain backslash escapes (the build compiler and the game do not expand them). Line breaks come from `CHT_HunterScript.LineBreak`, a string property holding one real LF that the generator fills; `Br()` falls back to a space when it is empty (a pre-0.1.4 save). `check_string_escapes.py` and the plugin validator fail the build on a literal backslash escape.
+- Outlaws: the Target alias carries the vanilla package `DefaultSandboxCurrentLocation1024` (0.1.4) so they sandbox near their spawn point. Alias packages only apply to this quest's own actors, so no other mod's NPCs are affected.
 - Each bounty: `Begin()` sets a single game-time update for the deadline. The target alias script reports `OnDeath` (claim) and `OnLoad` (spawn notoriety accomplices, Dread buff). No polling loops anywhere.
 - Hold detection: `Holds[i].IsChild(location)` over the nine vanilla hold locations.
 - Pay: `floor(base × (1 + 0.25 × notoriety) × (1 + standing / 200) × CHT_PayMult)`, base `150 + 10L` / `350 + 15L` / `700 + 25L`.

@@ -24,6 +24,7 @@ The build tooling for the Blackshield mod series, written to be reused by every 
 
 ## Changelog
 
+- **Contract Hunter 0.1.4:** `papyrus/check_string_escapes.py` (run by `build-papyrus.sh`) fails the build on backslash escapes in Papyrus string literals and compiled scripts, because the russo compiler and the game do not expand them. The validator rejects literal backslash escapes in plugin text, supports string script properties (`Vmad.Str`), and the generator can attach vanilla AI packages to quest aliases.
 - **Bounties of Oblivion (mod 2):** validator checks quest text tags, message button counts and an expected-unfilled list. Stubs gained `Form.RegisterForSleep`/`UnregisterForSleep`, `OnSleepStart`/`OnSleepStop`, `Quest.UpdateCurrentInstanceGlobal` and `Potion`. Removed `Form.GetName`, which is an SKSE addition and must not be used by mods that promise "no SKSE". Generators set `QuestFormVersion = 65` (what the SE Creation Kit writes; Mutagen's default is 255).
 - **Blackshield Company (mod 1):** initial version.
 
