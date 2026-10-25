@@ -90,7 +90,7 @@ For each tier, start a bounty, travel to the marker, kill the target. `sqv CHT_B
 - [ ] Let a bounty lapse / tear one up: the lapsed box and the (Dread) avenger warning are broken into lines.
 - [ ] Raise a hold to 50 standing: the jarl purse message has its paragraph break and uses apostrophes around the quote.
 - [ ] If any of these show one long line, the `LineBreak` property is empty (save from before 0.1.4 that kept the old script). The text is still readable, and a new game or a clean save fixes it. Please report it.
-- [ ] Sign the writ, immediately request a bounty from the ledger, then wait a few in-game hours: no second letter arrives for about 2 days. At level 10+, a Wanted/Dread letter then arrives with the Notice still open (intended: one per tier).
+- [ ] Sign the writ, immediately request a bounty from the ledger, then wait a few in-game hours: no second letter arrives for about 2 days. At level 10+ a Wanted letter (level 20+: Wanted or Dread) then arrives with the Notice still open (intended: one open bounty per tier).
 - [ ] Never two open bounties of the same tier; the ledger shows `Open bounties: n / 3` matching the journal.
 - [ ] Walk up to an outlaw's location: the outlaw is not frozen in place (sandboxing near the marker), still hostile and still dies for the claim. Report any that leave the location or never reach it.
 

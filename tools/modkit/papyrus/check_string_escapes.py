@@ -10,9 +10,10 @@ should be written as apostrophes.
 
 Usage: check_string_escapes.py <src dir with .psc> [<dir with .pex> ...]
 Checks the .psc sources (string literals only, comments and doc strings are
-skipped) and the compiled .pex files (any backslash escape in raw bytes).
+skipped) and the compiled .pex files (string constants in the string table only).
 """
 import re
+import struct
 import sys
 from pathlib import Path
 
@@ -56,7 +57,24 @@ def scan_psc(path: Path):
     return problems
 
 
-PEX_ESCAPE = re.compile(rb'\\[nrt0"\\]')
+PEX_ESCAPE = re.compile(r'\\[nrt0"\\]')
+PEX_MAGIC = 0xFA57C0DE
+
+
+def pex_strings(data: bytes):
+    """The string table of a Skyrim PEX (big-endian): header, 3 header strings, then the table."""
+    if len(data) < 16 or struct.unpack_from(">I", data, 0)[0] != PEX_MAGIC:
+        raise ValueError("not a Skyrim PEX file")
+    off = 16
+    for _ in range(3):  # source file name, user name, machine name: metadata, not script text
+        (n,) = struct.unpack_from(">H", data, off)
+        off += 2 + n
+    (count,) = struct.unpack_from(">H", data, off)
+    off += 2
+    for _ in range(count):
+        (n,) = struct.unpack_from(">H", data, off)
+        yield data[off + 2 : off + 2 + n].decode("latin-1")
+        off += 2 + n
 
 
 def main(argv):
@@ -70,10 +88,15 @@ def main(argv):
             print(f"[papyrus] {p.name}:{no}:{col}: backslash escape in a string literal: {text}", file=sys.stderr)
     for d in argv[2:]:
         for p in sorted(Path(d).glob("*.pex")):
-            m = PEX_ESCAPE.search(p.read_bytes())
-            if m:
+            try:
+                found = [t for t in pex_strings(p.read_bytes()) if PEX_ESCAPE.search(t)]
+            except (ValueError, struct.error) as e:
                 bad += 1
-                print(f"[papyrus] {p.name}: compiled script holds a literal backslash escape {m.group(0)!r}", file=sys.stderr)
+                print(f"[papyrus] {p.name}: cannot read string table ({e})", file=sys.stderr)
+                continue
+            for t in found:
+                bad += 1
+                print(f"[papyrus] {p.name}: compiled string constant holds a literal backslash escape: {t!r}", file=sys.stderr)
     if bad:
         print(f"[papyrus] {bad} literal escape problem(s). Papyrus does not expand them; see tools/modkit/papyrus/check_string_escapes.py", file=sys.stderr)
         return 1
