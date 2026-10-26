@@ -2,6 +2,16 @@
 
 All notable changes to this project are documented here. Versions follow [Semantic Versioning](https://semver.org/).
 
+## [Unreleased]
+
+Not yet tested in game.
+
+### Fixed
+- A third party (for example soldiers at a nearby camp) killing an outlaw while the hunter is far away no longer pays the bounty or counts as a lapse. The warrant is withdrawn with a message, with no change to notoriety or standing, and the outlaw can be posted again later. Kills by the player or a teammate, by an unknown killer, or by anyone while the player is close by (within about 58 m) still pay as before.
+
+### Added
+- Papyrus-log diagnostics: lines starting with `CHT_ ` record when a bounty target first loads and when it dies (killer, player distance, and whether the bounty was paid or voided).
+
 ## [0.1.4] - 2026-10-24
 
 Still early beta. Built and checked, but not yet played in game (no Skyrim install is available to the build). Reported by a Nexus tester.
