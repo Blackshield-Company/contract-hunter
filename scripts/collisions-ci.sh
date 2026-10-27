@@ -30,12 +30,17 @@ HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 VERIFIER="$HERE/verify-release.sh"
 
 dist="" ; self="${GITHUB_REPOSITORY:-}" ; work="" ; sibdir=""
+need_val() {
+  if [ "$2" -lt 2 ] || [ -z "$3" ] || [ "${3#--}" != "$3" ]; then
+    echo "collisions-ci.sh: $1 requires a value" >&2; exit 2
+  fi
+}
 while [ $# -gt 0 ]; do
   case "$1" in
-    --dist) dist="${2:-}"; shift 2 ;;
-    --repo) self="${2:-}"; shift 2 ;;
-    --work) work="${2:-}"; shift 2 ;;
-    --siblings-dir) sibdir="${2:-}"; shift 2 ;;
+    --dist) need_val "$1" $# "${2:-}"; dist="$2"; shift 2 ;;
+    --repo) need_val "$1" $# "${2:-}"; self="$2"; shift 2 ;;
+    --work) need_val "$1" $# "${2:-}"; work="$2"; shift 2 ;;
+    --siblings-dir) need_val "$1" $# "${2:-}"; sibdir="$2"; shift 2 ;;
     -h|--help) sed -n '2,24p' "${BASH_SOURCE[0]}"; exit 0 ;;
     *) echo "collisions-ci.sh: unknown argument: $1" >&2; exit 2 ;;
   esac
@@ -62,8 +67,25 @@ mkdir -p "$sib_root"
 compared=() ; skipped=() ; args=()
 note() { echo "::notice::$*"; }
 
+# Overall wall-clock budget (seconds) for fetching sibling releases; per-call timeouts are
+# clamped to what is left, and once it runs out the remaining siblings are skipped.
+DOWNLOAD_BUDGET=420
+budget_start=$SECONDS
+budget_left() { echo $(( DOWNLOAD_BUDGET - (SECONDS - budget_start) )); }
+# Never returns less than 1: `timeout 0` would disable the timeout altogether.
+clamp() { local left; left="$(budget_left)"; [ "$left" -lt 1 ] && left=1; [ "$left" -lt "$1" ] && echo "$left" || echo "$1"; }
+budget_noted=0
+
 for name in $SIBLINGS; do
   [ "$name" = "$self_name" ] && continue
+  if [ -z "$sibdir" ] && [ "$(budget_left)" -le 0 ]; then
+    if [ "$budget_noted" = 0 ]; then
+      note "download time budget (${DOWNLOAD_BUDGET}s) exhausted; skipping remaining siblings"
+      budget_noted=1
+    fi
+    skipped+=("$name|download time budget exhausted")
+    continue
+  fi
   dest="$sib_root/$name"
   mkdir -p "$dest"
   tag="local"
@@ -71,18 +93,26 @@ for name in $SIBLINGS; do
     cp "$sibdir/$name"/*.zip "$dest"/ 2>/dev/null || true
   else
     tag=""
-    if tag="$(timeout 60 gh api "repos/$OWNER/$name/releases/latest" --jq '.tag_name' 2>/dev/null)"; then :; else tag=""; fi
+    if tag="$(timeout "$(clamp 30)" gh api "repos/$OWNER/$name/releases/latest" --jq '.tag_name' 2>/dev/null)"; then :; else tag=""; fi
     case "$tag" in *[!A-Za-z0-9._+/-]*) tag="" ;; esac
     if [ -z "$tag" ]; then
       note "$OWNER/$name: no published release (or not readable with this token); skipped"
       skipped+=("$name|no published release or not readable")
       continue
     fi
-    ok=0
+    ok=0 ; out_of_time=0
     for attempt in 1 2; do
-      if timeout 180 gh release download "$tag" -R "$OWNER/$name" --pattern '*.zip' --dir "$dest" --clobber >/dev/null 2>&1; then ok=1; break; fi
-      sleep 3
+      if [ "$(budget_left)" -le 0 ]; then out_of_time=1; break; fi
+      if timeout "$(clamp 90)" gh release download "$tag" -R "$OWNER/$name" --pattern '*.zip' --dir "$dest" --clobber >/dev/null 2>&1; then ok=1; break; fi
+      [ "$attempt" = 1 ] && [ "$(budget_left)" -gt 3 ] && sleep 3
     done
+    if [ "$ok" != 1 ] && { [ "$out_of_time" = 1 ] || [ "$(budget_left)" -le 0 ]; }; then
+      rm -f "$dest"/*.zip
+      note "$OWNER/$name@$tag: download time budget (${DOWNLOAD_BUDGET}s) exhausted; skipped"
+      budget_noted=1
+      skipped+=("$name|download time budget exhausted")
+      continue
+    fi
     if [ "$ok" != 1 ]; then
       note "$OWNER/$name@$tag: could not download a .zip asset; skipped"
       skipped+=("$name|$tag has no downloadable .zip asset")
@@ -139,12 +169,15 @@ fi
 
 report="$work/collisions.json"
 out="$work/collisions.txt"
-timeout 600 "$VERIFIER" --collisions "$own_zip" "${args[@]}" --json "$report" >"$out" 2>&1
+rm -f "$report" "$out"
+timeout 300 "$VERIFIER" --collisions "$own_zip" "${args[@]}" --json "$report" >"$out" 2>&1
 rc=$?
-cat "$out"
+[ -f "$out" ] && cat "$out"
 
-if [ "$rc" -ne 0 ] && [ ! -s "$report" ]; then
-  echo "::error::collisions-ci: verify-release.sh --collisions failed to run (exit $rc)" >&2
+# 0 = no collision, 1 = collision (report still written); anything else (incl. 124 timeout)
+# or a missing report means the run did not complete.
+if { [ "$rc" -ne 0 ] && [ "$rc" -ne 1 ]; } || [ ! -s "$report" ]; then
+  echo "::error::collisions-ci: verify-release.sh --collisions failed to run (exit $rc$([ -s "$report" ] || echo ', no report'))" >&2
   summary ""; summary "**Result: ERROR**: the collision run did not complete (exit $rc)."
   exit 2
 fi
