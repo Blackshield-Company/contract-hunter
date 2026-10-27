@@ -3,7 +3,7 @@ Scriptname CHT_TargetAliasScript extends ReferenceAlias
 outlaw's death and the moment the player gets close (3D loaded).}
 
 Event OnDeath(Actor akKiller)
-	(GetOwningQuest() as CHT_BountyScript).TargetDied()
+	(GetOwningQuest() as CHT_BountyScript).TargetDied(akKiller)
 EndEvent
 
 Event OnLoad()

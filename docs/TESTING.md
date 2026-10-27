@@ -68,7 +68,7 @@ For each tier, start a bounty, travel to the marker, kill the target. `sqv CHT_B
 - [ ] **Wanted**: the outlaw has one bandit bodyguard. Payout includes +10 standing; about one in three also gives an **Outlaw's Signet**.
 - [ ] **Dread**: the outlaw has two guards (melee and archer) and *Dread Reputation* (+100 Health) in their active effects once loaded. Payout includes +15 standing and a **Dread Trophy Skull**.
 - [ ] If no location fits (rare), "The couriers come back empty-handed…" appears and nothing starts.
-- [ ] Killing the target before reaching the marker (e.g. with `kill` from far away) still counts.
+- [ ] Killing the target before reaching the marker (e.g. with `kill` from far away) still counts. This holds because the console kill has no third-party killer; a real NPC kill from far away voids the bounty (see section 9).
 
 ## 5. Deadlines, notoriety, avengers
 - [ ] Start a Notice bounty, then let it lapse (`set timescale to 20000` for about 15 seconds, then back to `20`, or wait 5 days). The "A bounty lapsed. The outlaw slipped away." box shows their new notoriety (1), the hold loses 5 standing, and the journal shows it failed.
@@ -93,6 +93,13 @@ For each tier, start a bounty, travel to the marker, kill the target. `sqv CHT_B
 - [ ] Sign the writ, immediately request a bounty from the ledger, then wait a few in-game hours: no second letter arrives for about 2 days. At level 10+ a Wanted letter (level 20+: Wanted or Dread) then arrives with the Notice still open (intended: one open bounty per tier).
 - [ ] Never two open bounties of the same tier; the ledger shows `Open bounties: n / 3` matching the journal.
 - [ ] Walk up to an outlaw's location: the outlaw is not frozen in place (sandboxing near the marker), still hostile and still dies for the claim. Report any that leave the location or never reach it.
+
+## 9. Unreleased: target kill credit and camps (not yet run in game)
+- [ ] **Normal kills still pay**: player melee; player bow from range; a follower kill with the player nearby; a summoned atronach kill with the player nearby (note whether the log marks the killer as a teammate); console `kill` on the target from far away (the killer is none or the player). Each shows the "Bounty claimed" box.
+- [ ] **Third-party kill far away voids**: start a bounty, stay more than 60 m from the target, then turn a soldier on it: `prid <Stormcloak or Imperial soldier id>`, `moveto <target id>` if needed, then `startcombat <target id>`. When the soldier kills the target: the "killed by someone else" box appears, no gold, no standing change, `show CHT_OpenCount` is back to what it was before the bounty, the journal shows the quest failed, and the same outlaw (same name) can be posted again later.
+- [ ] **Same kill with the player close still pays**: repeat the soldier kill while standing within about 50 m of the target. The bounty is paid (documented limitation: anyone's kill counts while you are near).
+- [ ] **Papyrus log**: with `bEnableLogging=1` and `bEnableTrace=1` in `[Papyrus]`, run `grep -n "CHT_ " Papyrus.0.log` and report the "target loaded" and "target died" lines (killer, player distance, decision).
+- [ ] **Camps and forts**: place a bounty on a Wanted or Dread tier at a fort. Record whether Imperial or Stormcloak garrison soldiers are present at the marker and whether the outlaw fights them, with the `CHT_ ` log lines. Please include your load order.
 
 ## Stuck? Reset commands
 ```

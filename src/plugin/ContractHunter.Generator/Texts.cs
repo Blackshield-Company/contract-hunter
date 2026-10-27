@@ -134,4 +134,5 @@ This warrant lapses in 10 days.
     public const string StageDone = "The outlaw is dead and the hold courts paid the bounty.";
     public const string StageExpired = "The bounty lapsed. The outlaw got away, and is bolder for it.";
     public const string StageAbandoned = "I tore up the bounty letter. The outlaw got away.";
+    public const string StageVoided = "The outlaw was killed by someone else before I could reach them. The warrant was withdrawn.";
 }
