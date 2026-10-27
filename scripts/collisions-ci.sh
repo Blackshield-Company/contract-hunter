@@ -62,7 +62,8 @@ cleanup_work=0
 if [ -z "$work" ]; then work="$(mktemp -d)"; cleanup_work=1; else mkdir -p "$work"; fi
 trap '[ "$cleanup_work" = 1 ] && rm -rf "$work"' EXIT
 sib_root="$work/siblings"
-mkdir -p "$sib_root"
+rm -rf "$sib_root"   # never reuse sibling zips left by an earlier run
+mkdir -p "$sib_root" || { echo "::error::collisions-ci: cannot create $sib_root" >&2; exit 2; }
 
 compared=() ; skipped=() ; args=()
 note() { echo "::notice::$*"; }
