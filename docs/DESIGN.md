@@ -36,6 +36,10 @@ Every location alias is inside `CompanionsRadiantAllowedHolds`, has a map marker
 - Hold detection: `Holds[i].IsChild(location)` over the nine vanilla hold locations.
 - Pay: `floor(base × (1 + 0.25 × notoriety) × (1 + standing / 200) × CHT_PayMult)`, base `150 + 10L` / `350 + 15L` / `700 + 25L`.
 
+### Kill credit
+
+Untested in game. `CHT_BountyScript.TargetDied(akKiller)` pays the bounty when the killer is the player, a player teammate (`IsPlayerTeammate()`, which covers followers; whether mercenaries and summons are flagged is not verified), unknown (`None`, e.g. a console `kill`), or anyone at all while the player is within `NEAR_UNITS` (4096 units, about 58 m) of the victim, so a nearby summon or ally still counts by distance. A third-party kill while the player is farther away (or the victim is not 3D loaded) voids the bounty: no pay, no notoriety, no standing change, the outlaw is not retired (so they can be posted again), and the quest ends at stage 160 (failed). The first eligible target load and the processed death each write a `CHT_ ` line to the Papyrus log (the death line has the killer, distance and decision).
+
 ## Scaled down from the concept (documented on purpose)
 
 - **Posted notices**: putting notices on vanilla boards needs world edits, so letters come by courier message instead. The vanilla courier NPC (`WICourier`) is driven by Bethesda's `WICourierScript`, whose exact function signatures can't be verified without the game's script sources, so the mod doesn't call it.

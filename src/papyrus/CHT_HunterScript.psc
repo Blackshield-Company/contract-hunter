@@ -435,6 +435,17 @@ Function BountyFailed(Int aiIndex, Int aiTier, Location akLocation, Bool abAband
 	Debug.MessageBox(text)
 EndFunction
 
+; Someone else killed the outlaw while the hunter was far away. No pay, no
+; notoriety, no standing change, no trophy, no avengers. The outlaw is dead but
+; NOT marked retired, so they can be posted again later via Reset()+Start() like
+; any other non-retired outlaw. This is intentional.
+Function BountyVoided(Int aiIndex, Int aiTier)
+	OpenFlags[aiTier].SetValueInt(0)
+	RecountOpen()
+	RecountEscaped()
+	Debug.MessageBox("The outlaw was killed by someone else before you reached them. No bounty is paid, and the warrant is withdrawn." + Br() + "They can be posted again later.")
+EndFunction
+
 Float Function BasePay(Int aiTier)
 	Int level = Game.GetPlayer().GetLevel()
 	If aiTier == TIER_NOTICE
