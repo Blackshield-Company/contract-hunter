@@ -4,7 +4,7 @@
   <Author>synthalorian</Author>
   <Version>@VERSION@</Version>
   <Website>https://github.com/Blackshield-Company/contract-hunter</Website>
-  <Description>Solo bounty hunting: courier bounty letters on named outlaws, Notice/Wanted/Dread tiers, deadlines, notoriety, avengers and per-hold standing. Early beta.</Description>
+  <Description>Solo bounty hunting: player-initiated contracts (posted notices + ledger), optional courier, Notice/Wanted/Dread tiers, deadlines, notoriety, avengers and per-hold standing. Early beta.</Description>
   <Groups>
     <element>Quests and Adventures</element>
   </Groups>

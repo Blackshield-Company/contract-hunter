@@ -43,7 +43,7 @@ internal static class Program
         // runtime, including 1.5.97 and 1.6.640, without Backported Extended ESL Support.
         mod.ModHeader.Stats.Version = 1.7f;
         mod.ModHeader.Author = "synthalorian";
-        mod.ModHeader.Description = "Contract Hunter: solo bounty hunting with tiers, deadlines, notoriety and hold standing.";
+        mod.ModHeader.Description = "Contract Hunter 0.2.0: player-initiated bounties, optional courier, tiers, deadlines, notoriety and hold standing.";
 
         var outPath = Path.Combine(outDir, PluginName);
         mod.BeginWrite

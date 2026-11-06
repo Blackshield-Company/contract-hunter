@@ -20,6 +20,7 @@ internal static class Vanilla
     public static readonly FormKey DefaultSandboxCurrentLocation1024 = K(0x0BFB6B);
     public static readonly FormKey MQ101 = K(0x03372B);
     public static readonly FormKey MQ102 = K(0x04E50D);
+    public static readonly FormKey Tamriel = K(0x00003C);
 
     // Leveled bandits, split by gender so names match
     public static readonly FormKey LCharBanditMeleeAny = K(0x03DECD);
@@ -63,6 +64,19 @@ internal static class Vanilla
     public static readonly FormKey CompanionsRadiantAllowedHolds = K(0x0F9073);
 
     // Items, keywords, sounds, art
+
+    // Vendor leveled lists (runtime AddForm only; never overridden in the plugin)
+    public static readonly FormKey LItemBookClutter = K(0x0D9F89);
+    public static readonly FormKey LItemBook0All = K(0x03FFFB);
+
+    // Steward containers in jarl longhouses (notice / writ placement, no CELL overrides)
+    public static readonly FormKey StewardsContainerWhiterun = K(0x0504F3);
+    public static readonly FormKey StewardsContainerRiftenKeep = K(0x0504FA);
+    public static readonly FormKey StewardsContainerFalkreathJarlsLonghouse = K(0x0504FE);
+    public static readonly FormKey StewardsContainerMorthalHighmoonHall = K(0x0504FF);
+    public static readonly FormKey StewardsContainerMarkarthKeep = K(0x050500);
+    public static readonly FormKey StewardsContainerWindhelmPalaceOfTheKings = K(0x059731);
+    public static readonly FormKey StewardsPrivateContainerSolitudeBluePalace = K(0x0590DB);
     public static readonly FormKey Gold001 = K(0x00000F);
     public static readonly FormKey VendorItemBook = K(0x0937A2);
     public static readonly FormKey VendorItemClutter = K(0x0914E9);

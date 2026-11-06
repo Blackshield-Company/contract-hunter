@@ -2,9 +2,9 @@
 
 # Contract Hunter
 
-A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bounty letters naming real outlaws hiding at real places. Deadlines matter: let a target slip away and they come back bolder, and a lapsed Dread warrant sends avengers after you. The jarls remember who keeps their roads clean.
+A Skyrim Special Edition mod about solo bounty hunting. Sign a Hunter's Writ, then take contracts from posted Bounty Notices or the Hunter's Ledger. Deadlines matter: let a target slip away and they come back bolder, and a lapsed Dread warrant sends avengers after you. The jarls remember who keeps their roads clean. Couriers are optional (off by default).
 
-**Status: v0.1.4, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). v0.1.4 has not been played in game by the author; a player reported literal `\n` in the standing and bounty-claimed boxes, and 0.1.4 fixes that. See [docs/TESTING.md](docs/TESTING.md).
+**Status: v0.2.0, early beta.** It passes every automated check in the build (Papyrus compile, plugin validation, byte-exact round trip, FOMOD schema). Not yet playtested in game by the author. See [docs/TESTING.md](docs/TESTING.md).
 
 - Game: Skyrim Special Edition / Anniversary Edition 1.6.x (also fine on 1.5.97). Works on Windows and on Linux through Proton.
 - Requirements: none beyond the base game. No SKSE, no SkyUI, no DLC, no Creation Club content.
@@ -15,8 +15,8 @@ A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bount
 
 | Feature | How it works |
 |---|---|
-| Registration | At level 3, past Helgen, a courier hands you the **Hunter's Writ**. Sign it to get the lesser power **Hunter's Ledger**. |
-| Bounty letters | Every 2 in-game days a courier brings a new letter, or ask for one in the ledger. Each letter names one outlaw and a vanilla location picked by the radiant system. Up to one open bounty per tier (so a Wanted or Dread letter can arrive while a Notice is open, never two of the same tier). A bounty you request in the ledger counts as the current letter. |
+| Registration | Find the **Hunter's Writ** on a steward desk in a jarl's longhouse, or buy it from a book vendor. Sign it to get the lesser power **Hunter's Ledger**. (Optional: set `CHT_CourierEnabled` to 1 for the old courier delivery past Helgen at level 3.) |
+| Contracts | Read a posted **Bounty Notice**, or ask from the ledger. Each contract names one outlaw and a vanilla location picked by the radiant system. Up to one open bounty per tier. Optional courier letters every 2 in-game days when `CHT_CourierEnabled` is 1. |
 | Tiers | **Notice**: small-time outlaws, 5 days. **Wanted** (level 10+): gang leaders with a bodyguard, 7 days. **Dread** (level 20+): the worst, two guards and +100 Health, 10 days. |
 | Named outlaws | 22 of them, each with a fixed name and their own bounty, on vanilla bandit templates (gender-matched). Killed outlaws stay dead until a whole tier is cleared out. |
 | Notoriety | A lapsed or torn-up bounty raises that outlaw's notoriety (max 3). When they come back (escaped outlaws are offered first half the time), they bring one extra accomplice per point and pay 25% more per point. |
@@ -24,7 +24,7 @@ A Skyrim Special Edition mod about solo bounty hunting. Couriers bring you bount
 | Hold standing | Each of the nine holds tracks your standing (0 to 100) in a global. +5/+10/+15 per Notice/Wanted/Dread bounty claimed there, the same off for failures. Bounties pay `standing / 2` % more. At 50 the jarl sends 500 gold. |
 | Rewards | Gold scaled to tier and level. A Dread Trophy Skull for every Dread target, an Outlaw's Signet from one Wanted target in three. |
 
-There is no new voice acting and no world edits: everything arrives by courier message and letter, and the ledger is a lesser power.
+There is no new voice acting and no vanilla record overrides: steward desks and vendors get the writ and notices at runtime, and the ledger is a lesser power.
 
 ## Install
 
@@ -39,10 +39,11 @@ Safe to add to an existing save. Don't uninstall mid-playthrough.
 ## Console tunables
 
 ```
-set CHT_IntroMinLevel to 3        (level before the writ arrives)
+set CHT_CourierEnabled to 0       (0 = diegetic writ/notices, default; 1 = courier writ + letters)
+set CHT_IntroMinLevel to 3        (level before a courier writ arrives, when courier is on)
 set CHT_WantedMinLevel to 10      (level for Wanted posters)
 set CHT_DreadMinLevel to 20       (level for Dread warrants)
-set CHT_LetterIntervalDays to 2   (days between courier letters)
+set CHT_LetterIntervalDays to 2   (days between courier letters, when courier is on)
 set CHT_PayMult to 1.0            (multiplier on bounty gold)
 ```
 

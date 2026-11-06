@@ -1,17 +1,17 @@
 # Nexus Mods page: Contract Hunter
 
-Early beta: v0.1.4 fixes literal `\n` showing in the standing and bounty-claimed boxes. Exact upload-form values are in [NEXUS_FIELDS.md](NEXUS_FIELDS.md).
+Early beta: v0.2.0 fixes literal `\n` showing in the standing and bounty-claimed boxes. Exact upload-form values are in [NEXUS_FIELDS.md](NEXUS_FIELDS.md).
 
 ## Page settings
 
 - **Game:** Skyrim Special Edition
 - **Mod name:** Contract Hunter
-- **Version:** 0.1.4 (early beta)
+- **Version:** 0.2.0 (early beta)
 - **Category:** Quests and Adventures
 - **Suggested tags:** Quests, Lore-Friendly, Bounty, Gameplay, Radiant, ESL, No SKSE, Scripted
 - **Requirements:** none.
 - **Permissions (suggested):** source on GitHub under MIT, so allow modification and conversions with credit. Don't allow re-uploads of the archive itself.
-- **File to upload:** `ContractHunter-0.1.4.zip` (FOMOD), main file, named "Contract Hunter".
+- **File to upload:** `ContractHunter-0.2.0.zip` (FOMOD), main file, named "Contract Hunter".
 
 ## Description (paste into the BBCode editor)
 
@@ -19,12 +19,12 @@ Early beta: v0.1.4 fixes literal `\n` showing in the standing and bounty-claimed
 [center][size=6][b]CONTRACT HUNTER[/b][/size]
 [size=3][i]A name, a place, a deadline. Bring them down before they slip away.[/i][/size]
 
-[size=3][color=#e0a030][b]EARLY BETA (v0.1.4)[/b]: fixes line breaks in the standing and bounty-claimed boxes, and outlaws no longer stand perfectly still. Please report bugs in the Bugs tab or on GitHub, ideally with your Papyrus log.[/color][/size][/center]
+[size=3][color=#e0a030][b]EARLY BETA (v0.2.0)[/b]: fixes line breaks in the standing and bounty-claimed boxes, and outlaws no longer stand perfectly still. Please report bugs in the Bugs tab or on GitHub, ideally with your Papyrus log.[/color][/size][/center]
 
 [line]
 
 [size=4][b]Summary[/b][/size]
-A courier finds you with the [b]Hunter's Writ[/b]. Sign it, and bounty letters start arriving: each one names a [b]real outlaw[/b] hiding at a [b]real place[/b] in Skyrim, with a deadline. Bring them down for gold and the gratitude of the hold. Let them get away and they come back bolder, and a lapsed [b]Dread warrant[/b] sends avengers after you. Solo bounty hunting, no follower company required.
+Find the [b]Hunter's Writ[/b] on a steward desk or from a book vendor. Sign it, then take contracts from posted [b]Bounty Notices[/b] or the ledger (couriers optional, off by default): each one names a [b]real outlaw[/b] hiding at a [b]real place[/b] in Skyrim, with a deadline. Bring them down for gold and the gratitude of the hold. Let them get away and they come back bolder, and a lapsed [b]Dread warrant[/b] sends avengers after you. Solo bounty hunting, no follower company required.
 
 [size=4][b]Features[/b][/size]
 [list]
@@ -35,7 +35,7 @@ A courier finds you with the [b]Hunter's Writ[/b]. Sign it, and bounty letters s
 [*][b]Wanted[/b] (level 10+): gang leaders with a bodyguard. 7 days.
 [*][b]Dread[/b] (level 20+): the worst in Skyrim, with two guards and extra health. 10 days.
 [/list]
-[*][b]Courier letters[/b] every couple of in-game days (one open bounty per tier at most, so a Wanted or Dread letter can arrive while a Notice is open; a bounty you request counts as the current letter), or request one any time from the [b]Hunter's Ledger[/b] lesser power.
+[*][b]Player-initiated contracts[/b] from posted Bounty Notices or the [b]Hunter's Ledger[/b] lesser power (one open bounty per tier). Optional courier letters when [c]CHT_CourierEnabled[/c] is 1.
 [*][b]Notoriety[/b]: let a bounty lapse (or tear up the letter) and that outlaw's notoriety rises, up to 3. When they resurface, they bring an extra accomplice per point, and their price goes up 25% per point.
 [*][b]Avengers[/b]: let a Dread warrant lapse and 2 to 4 Blood-Sworn Avengers track you down on the road.
 [*][b]Standing with every hold[/b], 0 to 100. Claimed bounties raise it, failures lower it. High standing pays up to 50% more, and at 50 the jarl sends a purse of 500 gold.
@@ -66,14 +66,14 @@ As with any scripted mod, don't remove it mid-playthrough. If you must, tear up 
 [size=4][b]Known issues / early beta limits[/b][/size]
 [list]
 [*]Not playtested in-game yet. Found something? Please post it in the Bugs tab.
-[*]No voice acting. Letters come by courier message rather than a walking courier NPC, and there are no notice boards (that would need world edits).
+[*]No voice acting. Writ and notices are placed on steward desks and injected into book vendors at runtime (no vanilla record overrides). Couriers are off by default.
 [*]Avengers appear near you rather than walking in from a distance. They never appear indoors or in cities, towns or homes.
 [*]If no eligible location is free, the couriers come back empty-handed. Try again later.
-[*]Settings are console globals for now: [code]set CHT_PayMult to 1.0 / set CHT_LetterIntervalDays to 2 / set CHT_IntroMinLevel to 3 / set CHT_WantedMinLevel to 10 / set CHT_DreadMinLevel to 20[/code]
+[*]Settings are console globals for now: [code]set CHT_CourierEnabled to 0 / set CHT_PayMult to 1.0 / set CHT_LetterIntervalDays to 2 / set CHT_IntroMinLevel to 3 / set CHT_WantedMinLevel to 10 / set CHT_DreadMinLevel to 20[/code]
 [/list]
 
 [size=4][b]Roadmap[/b][/size]
-Capture-alive contracts, more outlaws and locations, notice boards as an optional patch, and an MCM.
+Capture-alive contracts, more outlaws and locations, and an MCM.
 
 [size=4][b]Source[/b][/size]
 Open source (MIT): [url=https://github.com/Blackshield-Company/contract-hunter]github.com/Blackshield-Company/contract-hunter[/url]

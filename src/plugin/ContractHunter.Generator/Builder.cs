@@ -76,6 +76,7 @@ internal sealed class Builder
         var gDreadMin = Global("CHT_DreadMinLevel", 20);
         var gPayMult = Global("CHT_PayMult", 1.0f);
         var gInterval = Global("CHT_LetterIntervalDays", 2.0f);
+        var gCourier = Global("CHT_CourierEnabled", 0);
         var holds = new (string key, FormKey loc)[]
         {
             ("Haafingar", HaafingarHoldLocation), ("Reach", ReachHoldLocation), ("Hjaalmarch", HjaalmarchHoldLocation),
@@ -143,6 +144,7 @@ internal sealed class Builder
             VirtualMachineAdapter = script == null ? null : Vmad.Adapter(Vmad.Script(script, Vmad.Obj("Hunter", questHunter))),
         });
         var writ = Letter("CHT_HuntersWrit", Texts.WritName, Texts.Writ, MeshNote01, InvArtNote01, "CHT_WritScript");
+        var noticeBook = Letter("CHT_BountyNoticeBook", Texts.NoticeName, Texts.NoticeBook, MeshNote02, InvArtNote02, "CHT_NoticeScript");
         var letters = tiers.Select(t => Letter($"CHT_Letter{t.Text.Key}", t.Text.Title, t.Text.Letter, MeshNote02, InvArtNote02, null)).ToArray();
 
         MiscItem Trophy(string edid, string name, string mesh, ObjectBounds b, uint value, float weight, FormKey vendorKw) => Add(new MiscItem(Id(edid), R)
@@ -212,11 +214,22 @@ internal sealed class Builder
             Type = Quest.TypeEnum.None,
             QuestFormVersion = VanillaQuestFormVersion,
         });
+        var noticeSpots = new[]
+        {
+            StewardsContainerWhiterun, StewardsContainerRiftenKeep, StewardsContainerFalkreathJarlsLonghouse,
+            StewardsContainerMorthalHighmoonHall, StewardsContainerMarkarthKeep,
+            StewardsContainerWindhelmPalaceOfTheKings, StewardsPrivateContainerSolitudeBluePalace,
+        };
         hunter.VirtualMachineAdapter = Vmad.QuestAdapter(Vmad.Script("CHT_HunterScript",
             Vmad.Obj("CHT_Registered", gRegistered), Vmad.ObjList("OpenFlags", gOpen), Vmad.Obj("CHT_OpenCount", gOpenCount),
             Vmad.Obj("CHT_BountiesClaimed", gClaimed), Vmad.Obj("CHT_EscapedOutlaws", gEscaped),
             Vmad.Obj("CHT_IntroMinLevel", gIntroMin), Vmad.Obj("CHT_WantedMinLevel", gWantedMin), Vmad.Obj("CHT_DreadMinLevel", gDreadMin),
             Vmad.Obj("CHT_PayMult", gPayMult), Vmad.Obj("CHT_LetterIntervalDays", gInterval),
+            Vmad.Obj("CHT_CourierEnabled", gCourier),
+            Vmad.Obj("CHT_BountyNoticeBook", noticeBook.FormKey),
+            Vmad.ObjList("VendorLists", LItemBookClutter, LItemBook0All),
+            Vmad.ObjList("NoticeSpots", noticeSpots),
+            Vmad.Obj("Tamriel", Tamriel),
             Vmad.ObjList("Standing", gStanding),
             Vmad.ObjList("Holds", holds.Select(h => h.loc).ToArray()),
             Vmad.ObjList("Bounties", bountyQuests),

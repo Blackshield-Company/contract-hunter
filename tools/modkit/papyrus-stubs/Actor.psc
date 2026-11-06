@@ -27,3 +27,6 @@ Event OnObjectUnequipped(Form akBaseObject, ObjectReference akReference)
 EndEvent
 Event OnSpellCast(Form akSpell)
 EndEvent
+Int Function GetSitState() native
+Bool Function IsOnMount() native
+Bool Function IsInDialogueWithPlayer() native

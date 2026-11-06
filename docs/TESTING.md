@@ -41,16 +41,19 @@ The log is written to `.../My Games/Skyrim Special Edition/Logs/Script/Papyrus.0
 - [ ] Load a save. `show CHT_Registered` prints `0.00`. `sqv CHT_HunterQuest` shows the quest running.
 - [ ] With Blackshield Company and/or Bounties of Oblivion also installed, all plugins load and `show BSC_Joined` / `show BOO_Bound` still work.
 
-## 1. The writ
-- [ ] Level 3+ character, past Helgen. Within about 30 seconds the courier message appears and the **Hunter's Writ** is in your inventory.
-  - Faster: `set CHT_IntroMinLevel to 1`.
+## 1. The writ (0.2.0: diegetic by default)
+- [ ] With `CHT_CourierEnabled` at 0 (default): no courier message. Find the **Hunter's Writ** in a steward container (e.g. Dragonsreach) or buy it from a book vendor. Upgrade from 0.1.4: existing signed saves keep the ledger; unsigned saves get the new stock without a courier.
   - Bypass: `player.additem FExxx82F 1`.
-- [ ] Drop or sell the writ without signing, then wait 24 in-game hours. It comes back.
+- [ ] Optional courier path: `set CHT_CourierEnabled to 1`. Level 3+ past Helgen: within about a minute the courier message appears and the writ is in inventory (no save/load required). Faster: `set CHT_IntroMinLevel to 1`.
+- [ ] With courier on: drop or sell the writ without signing, wait 24 in-game hours; it comes back.
 - [ ] Read it and close the inventory. *Sign the writ / Not now* appears. *Not now* closes it; reading again offers it again.
 - [ ] *Sign the writ*: the registered message appears, **Hunter's Ledger** is in Magic > Powers, and `show CHT_Registered` is `1.00`.
 
-## 2. Courier letters
-- [ ] About 6 in-game hours after signing (`set timescale to 2000` for a few seconds, then back to `20`), "A courier finds you…" appears and a **Bounty Notice** letter is in your inventory.
+## 1b. Posted Bounty Notice
+- [ ] After signing, find or `player.additem` the **Bounty Notice** book (`CHT_BountyNoticeBook`). Read it: the request menu opens (same as the ledger). Before signing, reading it only shows a notification.
+
+## 2. Courier letters (only when `CHT_CourierEnabled` is 1)
+- [ ] About 6 in-game hours after signing (`set timescale to 2000` for a few seconds, then back to `20`), "A courier finds you…" appears and a bounty letter is in your inventory.
 - [ ] The letter names an outlaw and a real location (no `<Alias=…>` text left over). The journal (Side Quests) shows "Bounty Notice: <name>" with a map marker on that location.
 - [ ] Another letter arrives roughly every 2 days until one bounty of each allowed tier is open. Nothing arrives once all allowed tiers are open.
 - [ ] At level 20+, a Dread warrant can arrive by courier (about one letter in three).
