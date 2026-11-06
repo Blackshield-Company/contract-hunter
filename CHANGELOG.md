@@ -2,14 +2,22 @@
 
 All notable changes to this project are documented here. Versions follow [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## [0.2.0] - 2026-11-05
 
-Not yet tested in game.
+Early beta. Built and checked, but not yet played in game (no Skyrim install is available to the build).
+
+### Changed
+- Couriers are **off by default**. The Hunter's Writ is no longer pushed into the player's inventory by a courier message. Find it on steward desks in jarl longhouses, or buy it from merchants who sell books (runtime `AddForm` into vanilla book leveled lists; the plugin does not override those lists). Set `CHT_CourierEnabled` to 1 to restore the old courier writ and letter schedule.
+- When courier delivery is on, `CanDeliver` is stricter: Tamriel exterior only (not interiors, Solstheim, Soul Cairn, etc.), not sitting or in a menu/dialogue, and blocked during MQ101 plus a short soft DLC main-quest list (Dawnguard Awakening/Bloodline, Dragonborn MQ01/MQ02/MQ06) so letters do not fire in the wrong worldspace or mid-scene.
+- Starting a bounty from the ledger or a posted notice no longer shows the courier popup.
+
+### Added
+- **Bounty Notice** book (`CHT_BountyNoticeBook`): reading it (after signing the writ) opens the same request menu as the Hunter's Ledger.
+- Global `CHT_CourierEnabled` (default 0).
+- Save-compatible with 0.1.4: every previous FormID and EditorID kept; new IDs only from `0x857+`; script properties added only; `CHT_HunterQuest` still start-enabled; `GameLoaded` migration stops courier timers when courier is off; open bounties still `ResumeAfterLoad`; `CHT_BountiesClaimed` unchanged.
 
 ### Fixed
 - A third party (for example soldiers at a nearby camp) killing an outlaw while the hunter is far away no longer pays the bounty or counts as a lapse. The warrant is withdrawn with a message, with no change to notoriety or standing, and the outlaw can be posted again later. Kills by the player or a teammate, by an unknown killer, or by anyone while the player is close by (within about 58 m) still pay as before.
-
-### Added
 - Papyrus-log diagnostics: lines starting with `CHT_ ` record when a bounty target first loads and when it dies (killer, player distance, and whether the bounty was paid or voided).
 
 ## [0.1.4] - 2026-10-24

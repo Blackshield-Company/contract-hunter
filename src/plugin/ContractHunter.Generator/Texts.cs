@@ -8,11 +8,11 @@ internal static class Texts
 @"<font face='$HandwrittenFont'>
 To whoever is holding this,
 
-The holds pay for outlaws. Dead ones. The jarls post the notices, the couriers carry them, and nobody asks who collects, so long as the right head stops breathing.
+The holds pay for outlaws. Dead ones. The jarls post the notices on steward desks and with the merchants who deal in books, and nobody asks who collects, so long as the right head stops breathing.
 
-Put your mark below and the couriers will know your name. Bounty letters will find you on the road: small notices at first, then the Wanted, and if you live long enough, the Dread.
+Put your mark below. Open the Hunter's Ledger, or read a posted Bounty Notice, and take a contract: small notices at first, then the Wanted, and if you live long enough, the Dread.
 
-Every letter has a deadline. Let one lapse and the outlaw learns your face, gets bolder, and hires more blades. Let a Dread target walk, and their friends will come looking for you.
+Every contract has a deadline. Let one lapse and the outlaw learns your face, gets bolder, and hires more blades. Let a Dread target walk, and their friends will come looking for you.
 
 The jarls remember who keeps their roads clean.
 
@@ -23,13 +23,25 @@ The jarls remember who keeps their roads clean.
         "A courier jogs up to you, out of breath. \"Letter for you. From the hold courts, they said. Something about bounties.\"";
 
     public const string RegisterOffer =
-        "The Hunter's Writ has a line at the bottom for your mark.\n\nSign it, and bounty letters will start finding you: Notice, Wanted and Dread targets across Skyrim's holds, each with a deadline.";
+        "The Hunter's Writ has a line at the bottom for your mark.\n\nSign it to take contracts: Notice, Wanted and Dread targets across Skyrim's holds, each with a deadline. Use the Hunter's Ledger or read a posted Bounty Notice.";
 
     public const string Registered =
-        "You sign the writ. The ink is barely dry before you hear the couriers have your name.\n\nYou can now open the Hunter's Ledger (a lesser power) to request bounties, check your open contracts, and see your standing with each hold.";
+        "You sign the writ.\n\nYou can now open the Hunter's Ledger (a lesser power) to request bounties, check your open contracts, and see your standing with each hold. Posted Bounty Notices work the same way once signed.";
 
     public const string BountyCourier =
         "A courier finds you. \"Bounty letter, hunter. Sealed by the hold courts.\" It's in your inventory. You can hold one open bounty per tier.";
+
+    public const string NoticeName = "Bounty Notice";
+    public const string NoticeBook =
+@"<font face='$HandwrittenFont'>
+BOUNTY NOTICE
+
+The hold courts are posting contracts again. Named outlaws. Real places. Deadlines.
+
+If you have signed a Hunter's Writ, read this notice and choose a tier: Notice, Wanted, or Dread.
+
+One open bounty per tier. Let a contract lapse and the outlaw comes back bolder.
+</font>";
 
     public const string LedgerMenu =
         "HUNTER'S LEDGER\n\nBounties claimed: %.0f\nOutlaws who escaped you: %.0f\nOpen bounties: %.0f / 3";
@@ -41,7 +53,7 @@ The jarls remember who keeps their roads clean.
         "Tear up a bounty letter? It counts as a lapsed contract: the outlaw's notoriety grows and the hold remembers.";
 
     public const string NoBounty =
-        "The couriers come back empty-handed. No outlaw of that kind can be placed right now. Try again later.";
+        "No outlaw of that kind can be placed right now. Try again later.";
 
     public sealed record Outlaw(string Name, string Short, FormKeyRef Template);
     public enum FormKeyRef { NoticeNordM, NoticeNordF, NoticeEvenM, NoticeEvenF, NoticeComM, NoticeComF, BossNordM, BossNordF, BossEvenM, BossEvenF, BossComM, BossComF, BossOrcM }

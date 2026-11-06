@@ -1,8 +1,9 @@
 Scriptname CHT_HunterScript extends Quest
-{Contract Hunter - main controller. Delivers the Hunter's Writ, runs the
-ledger menus, sends bounty letters by courier, pays bounties, and tracks
-per-outlaw notoriety, per-hold standing and the avengers sent after a
-hunter who lets a Dread warrant lapse.}
+{Contract Hunter - main controller. Places the Hunter's Writ (steward desks
+and vendors by default; optional courier), runs the ledger menus, starts
+bounties from posted notices or the ledger, optionally sends bounty letters
+by courier, pays bounties, and tracks per-outlaw notoriety, per-hold standing
+and the avengers sent after a hunter who lets a Dread warrant lapse.}
 
 ; ---------------------------------------------------------------------------
 ; Properties (filled by the plugin generator, see src/plugin)
@@ -19,6 +20,16 @@ GlobalVariable Property CHT_WantedMinLevel Auto
 GlobalVariable Property CHT_DreadMinLevel Auto
 GlobalVariable Property CHT_PayMult Auto
 GlobalVariable Property CHT_LetterIntervalDays Auto
+GlobalVariable Property CHT_CourierEnabled Auto
+{0 = writ/notices are diegetic (default). 1 = restore courier writ and letters.}
+Book Property CHT_BountyNoticeBook Auto
+{Posted bounty notice. OnRead opens RequestMenu when registered.}
+LeveledItem[] Property VendorLists Auto
+{Runtime AddForm targets (e.g. LItemBookClutter). No vanilla LVLI overrides.}
+ObjectReference[] Property NoticeSpots Auto
+{Steward containers in jarl longhouses; writ and notice are AddItem'd once.}
+WorldSpace Property Tamriel Auto
+{Exterior deliveries only in Tamriel (not Solstheim, Soul Cairn, etc.).}
 GlobalVariable[] Property Standing Auto
 {Standing with each hold, 0 to 100, same order as Holds.}
 Location[] Property Holds Auto
@@ -70,6 +81,7 @@ Int Property JARL_GIFT_GOLD = 500 AutoReadOnly
 Int Property MAX_AVENGERS = 4 AutoReadOnly
 
 Bool writDelivered = False
+Bool stockReady = False
 Int[] notoriety
 Bool[] retired
 Bool[] jarlGiftGiven
@@ -104,20 +116,28 @@ Event OnInit()
 	notoriety = new Int[22]
 	retired = new Bool[22]
 	jarlGiftGiven = new Bool[9]
-	RegisterForSingleUpdate(20.0)
+	EnsureDiegeticStock()
+	If CourierOn()
+		RegisterForSingleUpdate(20.0)
+	EndIf
 EndEvent
 
 ; Update registrations do not survive a save load. CHT_LoadAliasScript calls this.
 Function GameLoaded()
+	EnsureDiegeticStock()
+	; 0.2.0 migration: when courier is off, do not restart the writ/letter courier timers.
 	If CHT_Registered.GetValueInt() == 0
-		If !writDelivered
-			RegisterForSingleUpdate(20.0)
-		Else
-			RegisterForSingleUpdateGameTime(24.0)
+		If CourierOn()
+			If !writDelivered
+				RegisterForSingleUpdate(20.0)
+			Else
+				RegisterForSingleUpdateGameTime(24.0)
+			EndIf
 		EndIf
 	ElseIf pendingAvengers > 0
 		RegisterForSingleUpdateGameTime(1.0)
 	Else
+		; Avenger poll (and courier letters when enabled).
 		RegisterForSingleUpdateGameTime(6.0)
 	EndIf
 	Int i = 0
@@ -134,9 +154,9 @@ Function GameLoaded()
 	EndIf
 EndFunction
 
-; Real-time poll, only until the writ has been delivered.
+; Real-time poll, only while courier is on and the writ has not been delivered.
 Event OnUpdate()
-	If CHT_Registered.GetValueInt() != 0 || writDelivered
+	If !CourierOn() || CHT_Registered.GetValueInt() != 0 || writDelivered
 		Return
 	EndIf
 	If Game.GetPlayer().GetLevel() >= CHT_IntroMinLevel.GetValueInt() && CanDeliver()
@@ -160,18 +180,101 @@ Bool Function PastHelgen()
 	Return MQ102 && (MQ102.IsRunning() || MQ102.IsCompleted() || MQ102.GetStage() > 0)
 EndFunction
 
+Bool Function CourierOn()
+	Return CHT_CourierEnabled && CHT_CourierEnabled.GetValueInt() != 0
+EndFunction
+
+; Hardened for 0.2.0: Tamriel exterior, not sitting/dialogue/menu, MQ101 + short DLC MQ blocklist.
 Bool Function CanDeliver()
 	Actor player = Game.GetPlayer()
 	If MQ101 && MQ101.IsRunning() && !MQ101.IsCompleted() && !PastHelgen()
 		Return False
 	EndIf
+	If DlcMainQuestBlocking()
+		Return False
+	EndIf
 	If player.IsInCombat()
+		Return False
+	EndIf
+	If player.IsInInterior()
+		Return False
+	EndIf
+	WorldSpace ws = player.GetWorldSpace()
+	If !ws || (Tamriel && ws != Tamriel)
+		Return False
+	EndIf
+	If player.GetSitState() != 0 && !player.IsOnMount()
+		Return False
+	EndIf
+	If Utility.IsInMenuMode()
 		Return False
 	EndIf
 	If !Game.IsMovementControlsEnabled() || !Game.IsFightingControlsEnabled()
 		Return False
 	EndIf
 	Return True
+EndFunction
+
+; Soft DLC refs so Dawnguard/Dragonborn are not masters. Short main-quest blocklist only.
+Bool Function DlcMainQuestBlocking()
+	Quest q
+	q = Game.GetFormFromFile(0x00352A, "Dawnguard.esm") as Quest ; DLC1VQ01 Awakening
+	If q && q.IsRunning() && !q.IsCompleted()
+		Return True
+	EndIf
+	q = Game.GetFormFromFile(0x002F65, "Dawnguard.esm") as Quest ; DLC1VQ02 Bloodline
+	If q && q.IsRunning() && !q.IsCompleted()
+		Return True
+	EndIf
+	q = Game.GetFormFromFile(0x017F8E, "Dragonborn.esm") as Quest ; DLC2MQ01
+	If q && q.IsRunning() && !q.IsCompleted()
+		Return True
+	EndIf
+	q = Game.GetFormFromFile(0x017F8F, "Dragonborn.esm") as Quest ; DLC2MQ02
+	If q && q.IsRunning() && !q.IsCompleted()
+		Return True
+	EndIf
+	q = Game.GetFormFromFile(0x0179D7, "Dragonborn.esm") as Quest ; DLC2MQ06
+	If q && q.IsRunning() && !q.IsCompleted()
+		Return True
+	EndIf
+	Return False
+EndFunction
+
+; One-time: AddForm into vendor book lists + put a writ and notice in steward containers.
+Function EnsureDiegeticStock()
+	If stockReady
+		Return
+	EndIf
+	stockReady = True
+	Int i = 0
+	If VendorLists
+		While i < VendorLists.Length
+			If VendorLists[i]
+				VendorLists[i].AddForm(CHT_HuntersWrit, 1, 1)
+				If CHT_BountyNoticeBook
+					VendorLists[i].AddForm(CHT_BountyNoticeBook, 1, 1)
+				EndIf
+			EndIf
+			i += 1
+		EndWhile
+	EndIf
+	i = 0
+	If NoticeSpots
+		While i < NoticeSpots.Length
+			ObjectReference spot = NoticeSpots[i]
+			If spot
+				If CHT_HuntersWrit && spot.GetItemCount(CHT_HuntersWrit) == 0
+					spot.AddItem(CHT_HuntersWrit, 1, True)
+				EndIf
+				If CHT_BountyNoticeBook && spot.GetItemCount(CHT_BountyNoticeBook) == 0
+					spot.AddItem(CHT_BountyNoticeBook, 1, True)
+				EndIf
+			EndIf
+			i += 1
+		EndWhile
+	EndIf
+	Debug.Trace("CHT_ diegetic writ/notice stock ready")
 EndFunction
 
 ; Called by CHT_WritScript when the writ is read.
@@ -186,12 +289,23 @@ Function OnWritRead()
 	EndIf
 EndFunction
 
+; Called by CHT_NoticeScript when a posted Bounty Notice is read.
+Function OnNoticeRead()
+	If CHT_Registered.GetValueInt() == 0
+		Debug.Notification("Sign a Hunter's Writ before taking posted notices.")
+		Return
+	EndIf
+	RequestMenu()
+EndFunction
+
 Function Register()
 	CHT_Registered.SetValueInt(1)
 	Game.GetPlayer().AddSpell(CHT_PowerLedger)
 	CHT_MsgRegistered.Show()
-	; The first notice arrives within the next game day.
-	nextLetterTime = Utility.GetCurrentGameTime() + 0.25
+	If CourierOn()
+		; The first courier letter arrives within the next game day.
+		nextLetterTime = Utility.GetCurrentGameTime() + 0.25
+	EndIf
 	RegisterForSingleUpdateGameTime(6.0)
 EndFunction
 
@@ -202,23 +316,27 @@ EndFunction
 Event OnUpdateGameTime()
 	Actor player = Game.GetPlayer()
 	If CHT_Registered.GetValueInt() == 0
-		If writDelivered && player.GetItemCount(CHT_HuntersWrit) == 0 && CanDeliver()
+		If CourierOn() && writDelivered && player.GetItemCount(CHT_HuntersWrit) == 0 && CanDeliver()
 			CHT_MsgIntroCourier.Show()
 			player.AddItem(CHT_HuntersWrit, 1)
 		EndIf
-		RegisterForSingleUpdateGameTime(24.0)
+		If CourierOn()
+			RegisterForSingleUpdateGameTime(24.0)
+		EndIf
 		Return
 	EndIf
 	If pendingAvengers > 0
 		TrySendAvengers()
 	EndIf
-	Float now = Utility.GetCurrentGameTime()
-	If now >= nextLetterTime && CHT_OpenCount.GetValueInt() < MAX_OPEN && CanDeliver()
-		Int tier = PickCourierTier()
-		If tier >= 0
-			StartBounty(tier)
+	If CourierOn()
+		Float now = Utility.GetCurrentGameTime()
+		If now >= nextLetterTime && CHT_OpenCount.GetValueInt() < MAX_OPEN && CanDeliver()
+			Int tier = PickCourierTier()
+			If tier >= 0
+				StartBountyFromCourier(tier)
+			EndIf
+			nextLetterTime = now + CHT_LetterIntervalDays.GetValue()
 		EndIf
-		nextLetterTime = now + CHT_LetterIntervalDays.GetValue()
 	EndIf
 	If pendingAvengers > 0
 		RegisterForSingleUpdateGameTime(1.0)
@@ -279,7 +397,15 @@ Int Function TierOf(Int aiIndex)
 	Return TIER_DREAD
 EndFunction
 
+Bool Function StartBountyFromCourier(Int aiTier)
+	Return StartBountyEx(aiTier, True)
+EndFunction
+
 Bool Function StartBounty(Int aiTier)
+	Return StartBountyEx(aiTier, False)
+EndFunction
+
+Bool Function StartBountyEx(Int aiTier, Bool abFromCourier)
 	If OpenFlags[aiTier].GetValueInt() != 0 || CHT_OpenCount.GetValueInt() >= MAX_OPEN
 		Return False
 	EndIf
@@ -296,7 +422,7 @@ Bool Function StartBounty(Int aiTier)
 	; Escaped outlaws come back first, half of the time.
 	If Utility.RandomInt(0, 1) == 0
 		Int escaped = FindEscaped(first, count)
-		If escaped >= 0 && TryStart(escaped)
+		If escaped >= 0 && TryStart(escaped, abFromCourier)
 			Return True
 		EndIf
 	EndIf
@@ -307,7 +433,7 @@ Bool Function StartBounty(Int aiTier)
 		Int idx = first + (offset + i) % count
 		If !retired[idx] && !Bounties[idx].IsRunning()
 			attempts += 1
-			If TryStart(idx)
+			If TryStart(idx, abFromCourier)
 				Return True
 			EndIf
 		EndIf
@@ -340,7 +466,7 @@ Int Function FindEscaped(Int aiFirst, Int aiCount)
 	Return -1
 EndFunction
 
-Bool Function TryStart(Int aiIndex)
+Bool Function TryStart(Int aiIndex, Bool abFromCourier)
 	Quest q = Bounties[aiIndex]
 	If q.IsRunning()
 		Return False
@@ -356,7 +482,9 @@ Bool Function TryStart(Int aiIndex)
 	EndIf
 	OpenFlags[TierOf(aiIndex)].SetValueInt(1)
 	RecountOpen()
-	CHT_MsgBountyCourier.Show()
+	If abFromCourier
+		CHT_MsgBountyCourier.Show()
+	EndIf
 	(q as CHT_BountyScript).Begin(notoriety[aiIndex])
 	Return True
 EndFunction
