@@ -338,6 +338,10 @@ Event OnUpdateGameTime()
 		EndIf
 		If CourierOn()
 			RegisterForSingleUpdateGameTime(24.0)
+		Else
+			; Courier was turned off while a daily tick was pending: keep a real-time
+			; poll so turning it back on does not require a reload.
+			RegisterForSingleUpdate(60.0)
 		EndIf
 		Return
 	EndIf
