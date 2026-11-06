@@ -64,7 +64,7 @@ internal static class Vanilla
     public static readonly FormKey CompanionsRadiantAllowedHolds = K(0x0F9073);
 
     // Items, keywords, sounds, art
-    
+
     // Vendor leveled lists (runtime AddForm only; never overridden in the plugin)
     public static readonly FormKey LItemBookClutter = K(0x0D9F89);
     public static readonly FormKey LItemBook0All = K(0x03FFFB);

@@ -127,10 +127,12 @@ Function GameLoaded()
 	EnsureDiegeticStock()
 	; 0.2.0 migration: when courier is off, do not restart the writ/letter courier timers.
 	If CHT_Registered.GetValueInt() == 0
-		If !writDelivered
-			RegisterForSingleUpdate(20.0)
-		ElseIf CourierOn()
+		; Keep a real-time tick while unsigned so courier opt-in works even after
+		; the writ was read ("Not now") or after a 0.1.4 unsigned save.
+		If CourierOn() && writDelivered
 			RegisterForSingleUpdateGameTime(24.0)
+		Else
+			RegisterForSingleUpdate(20.0)
 		EndIf
 	ElseIf pendingAvengers > 0
 		RegisterForSingleUpdateGameTime(1.0)
@@ -152,20 +154,31 @@ Function GameLoaded()
 	EndIf
 EndFunction
 
-; Real-time poll until the writ is signed. When courier is off, just keep a slow
-; tick so enabling CHT_CourierEnabled mid-session starts delivery without a reload.
+; Real-time poll until the writ is signed. When courier is off, keep a slow tick so
+; enabling CHT_CourierEnabled mid-session (including after "Not now") starts delivery
+; without a reload.
 Event OnUpdate()
-	If CHT_Registered.GetValueInt() != 0 || writDelivered
+	If CHT_Registered.GetValueInt() != 0
 		Return
 	EndIf
 	If !CourierOn()
 		RegisterForSingleUpdate(60.0)
 		Return
 	EndIf
-	If Game.GetPlayer().GetLevel() >= CHT_IntroMinLevel.GetValueInt() && CanDeliver()
+	Actor player = Game.GetPlayer()
+	If writDelivered
+		; Courier just turned on, or daily redelivery of a lost unsigned writ.
+		If player.GetItemCount(CHT_HuntersWrit) == 0 && CanDeliver()
+			CHT_MsgIntroCourier.Show()
+			player.AddItem(CHT_HuntersWrit, 1)
+		EndIf
+		RegisterForSingleUpdateGameTime(24.0)
+		Return
+	EndIf
+	If player.GetLevel() >= CHT_IntroMinLevel.GetValueInt() && CanDeliver()
 		DeliverWrit()
 	Else
-		Debug.Trace("CHT_ writ waiting: level " + Game.GetPlayer().GetLevel() + "/" + CHT_IntroMinLevel.GetValueInt() + ", MQ101 running " + (MQ101 && MQ101.IsRunning()) + ", past Helgen " + PastHelgen())
+		Debug.Trace("CHT_ writ waiting: level " + player.GetLevel() + "/" + CHT_IntroMinLevel.GetValueInt() + ", MQ101 running " + (MQ101 && MQ101.IsRunning()) + ", past Helgen " + PastHelgen())
 		RegisterForSingleUpdate(30.0)
 	EndIf
 EndEvent
