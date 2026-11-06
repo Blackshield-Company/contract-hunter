@@ -8,6 +8,7 @@ Early beta. Built and checked, but not yet played in game (no Skyrim install is 
 
 ### Changed
 - Couriers are **off by default**. The Hunter's Writ is no longer pushed into the player's inventory by a courier message. Find it on steward desks in jarl longhouses, or buy it from merchants who sell books (runtime `AddForm` into vanilla book leveled lists; the plugin does not override those lists). Set `CHT_CourierEnabled` to 1 to restore the old courier writ and letter schedule.
+- Enabling `CHT_CourierEnabled` mid-session (before the writ is signed) is picked up within about a minute without needing a save/load.
 - When courier delivery is on, `CanDeliver` is stricter: Tamriel exterior only (not interiors, Solstheim, Soul Cairn, etc.), not sitting or in a menu/dialogue, and blocked during MQ101 plus a short soft DLC main-quest list (Dawnguard Awakening/Bloodline, Dragonborn MQ01/MQ02/MQ06) so letters do not fire in the wrong worldspace or mid-scene.
 - Starting a bounty from the ledger or a posted notice no longer shows the courier popup.
 

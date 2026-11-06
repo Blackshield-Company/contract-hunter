@@ -117,9 +117,9 @@ Event OnInit()
 	retired = new Bool[22]
 	jarlGiftGiven = new Bool[9]
 	EnsureDiegeticStock()
-	If CourierOn()
-		RegisterForSingleUpdate(20.0)
-	EndIf
+	; Always schedule a real-time tick while unsigned so set CHT_CourierEnabled to 1
+	; mid-session is noticed without needing a save/load (0.2.0 Codex QA).
+	RegisterForSingleUpdate(20.0)
 EndEvent
 
 ; Update registrations do not survive a save load. CHT_LoadAliasScript calls this.
@@ -127,12 +127,10 @@ Function GameLoaded()
 	EnsureDiegeticStock()
 	; 0.2.0 migration: when courier is off, do not restart the writ/letter courier timers.
 	If CHT_Registered.GetValueInt() == 0
-		If CourierOn()
-			If !writDelivered
-				RegisterForSingleUpdate(20.0)
-			Else
-				RegisterForSingleUpdateGameTime(24.0)
-			EndIf
+		If !writDelivered
+			RegisterForSingleUpdate(20.0)
+		ElseIf CourierOn()
+			RegisterForSingleUpdateGameTime(24.0)
 		EndIf
 	ElseIf pendingAvengers > 0
 		RegisterForSingleUpdateGameTime(1.0)
@@ -154,9 +152,14 @@ Function GameLoaded()
 	EndIf
 EndFunction
 
-; Real-time poll, only while courier is on and the writ has not been delivered.
+; Real-time poll until the writ is signed. When courier is off, just keep a slow
+; tick so enabling CHT_CourierEnabled mid-session starts delivery without a reload.
 Event OnUpdate()
-	If !CourierOn() || CHT_Registered.GetValueInt() != 0 || writDelivered
+	If CHT_Registered.GetValueInt() != 0 || writDelivered
+		Return
+	EndIf
+	If !CourierOn()
+		RegisterForSingleUpdate(60.0)
 		Return
 	EndIf
 	If Game.GetPlayer().GetLevel() >= CHT_IntroMinLevel.GetValueInt() && CanDeliver()
