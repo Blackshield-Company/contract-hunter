@@ -43,6 +43,9 @@ Still early beta, not yet playtested in game.
 
 ## [Unreleased]
 
+### Fixed
+- The FOMOD now installs its Data folders in lowercase (`scripts/`, `seq/`, `sound/`, `sound/voice/`). The game opens them by their lowercase names. On Linux (Proton), a Data folder that also holds a capitalised copy of one of them from another mod is read only from the exact-case folder, so the compiled scripts, the SEQ file or the voice files could go unread. Nothing changes on Windows, where folder case does not matter. No FormIDs changed.
+
 ## [0.1.2] - 2026-10-10
 
 Still early beta, not yet playtested in game.
